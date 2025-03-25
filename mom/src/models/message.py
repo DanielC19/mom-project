@@ -2,7 +2,7 @@ from datetime import datetime
 import random
 
 class Message:
-    def __init__(self, content, parent, sender):
+    def __init__(self, content, parent, sender=None):
         self.message_id = self.generate_message_id(parent)
         self.parent = parent
         self.content = content
@@ -18,5 +18,5 @@ class Message:
             'timestamp': self.timestamp
         }
 
-    def generate_message_id(parent) -> str :
+    def generate_message_id(self, parent) -> str :
         return parent + '_' + str(random.randint(100000, 999999))
