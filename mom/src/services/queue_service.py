@@ -1,3 +1,4 @@
+from src.models.message import Message
 from src.models.queue import Queue
 
 class QueueService:
@@ -12,7 +13,8 @@ class QueueService:
 
     def push_message(self, data, queue_id):
         try:
-            self.queues[queue_id].enqueue(data)
+            message = Message(**data, parent=queue_id)
+            self.queues[queue_id].enqueue(message)
             return True
         except Exception as e:
             return False

@@ -8,7 +8,7 @@ class Queue:
     def to_dict(self):
         return {
             'queue_id': self.queue_id,
-            'messages': self.messages
+            'messages': [message.to_dict() for message in self.messages]
         }
 
     def enqueue(self, message:Message):
