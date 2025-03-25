@@ -16,10 +16,10 @@ class QueueController:
         return jsonify(queues), 200
 
     def push_message(self, data, queue_id):
-        message = self.queue_service.push_message(data, queue_id)
-        if not message:
+        response = self.queue_service.push_message(data, queue_id)
+        if not response:
             return jsonify({"message": "Queue not found"}), 404
-        return jsonify(message.to_dict()), 201
+        return jsonify({"success": response}), 201
 
     def pull_message(self, queue_id):
         message = self.queue_service.pull_message(queue_id)
