@@ -30,3 +30,8 @@ class TopicsService:
 
     def get_topics(self):
         return [topic.to_dict() for topic in self.topics.values()]
+
+    def pull_messages(self, topic_id, subscriber_id):
+        if topic_id in self.topics:
+            return self.topics[topic_id].pull_messages(subscriber_id)
+        return []

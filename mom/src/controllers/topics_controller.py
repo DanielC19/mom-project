@@ -32,3 +32,9 @@ class TopicController:
     def list_topics(self):
         topics = self.topics_service.get_topics()
         return jsonify(topics), 200
+
+    def pull_messages(self, topic_id, subscriber_id):
+        messages = self.topics_service.pull_messages(topic_id, subscriber_id)
+        if messages:
+            return jsonify([message.to_dict() for message in messages]), 200
+        return jsonify({"message": "No messages or invalid topic/subscriber"}), 404
