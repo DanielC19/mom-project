@@ -25,3 +25,7 @@ def unsubscribe(topic_id, subscriber_id):
 @topic_bp.route('/topics', methods=['GET'])
 def list_topics():
     return topic_controller.list_topics()
+
+@topic_bp.route('/topic/<topic_id>/pull/<subscriber_id>', methods=['GET'])
+def pull_messages(topic_id, subscriber_id):
+    return topic_controller.pull_messages(topic_id, subscriber_id)

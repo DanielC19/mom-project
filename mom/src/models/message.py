@@ -7,6 +7,7 @@ class Message:
         self.parent = parent
         self.content = content
         self.sender = sender
+        self.sent = []
         self.timestamp = datetime.now().isoformat()
 
     def to_dict(self):
