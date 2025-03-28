@@ -12,7 +12,7 @@ def create_topic():
 @topic_bp.route('/topic/<topic_id>/publish', methods=['POST'])
 def publish_message(topic_id):
     data = request.json
-    return topic_controller.publish_message(data, topic_id)
+    return topic_controller.publish_message(topic_id, data)
 
 @topic_bp.route('/topic/<topic_id>/subscribe/<subscriber_id>', methods=['POST'])
 def subscribe(topic_id, subscriber_id):
