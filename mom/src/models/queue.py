@@ -1,5 +1,13 @@
 from src.models.message import Message
 
+queue_schema = {
+    "type": "object",
+    "properties": {
+        "queue_id": {"type": "string"}
+    },
+    "required": ["queue_id"],
+}
+
 class Queue:
     def __init__(self, queue_id):
         self.queue_id = queue_id

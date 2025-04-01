@@ -1,6 +1,15 @@
 from datetime import datetime
 import random
 
+message_schema = {
+    "type": "object",
+    "properties": {
+        "content": {"type": "string"},
+        "sender": {"type": "string"},
+    },
+    "required": ["content"],
+}
+
 class Message:
     def __init__(self, content, parent, sender=None):
         self.message_id = self.generate_message_id(parent)

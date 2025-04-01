@@ -1,7 +1,9 @@
 Flask
 Flask-JWT-Extended
 Flask-SQLAlchemy
+flask-cors
 requests
 pytest
 python-dotenv
-flask-cors
+jsonschema
+logging
