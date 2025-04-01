@@ -1,5 +1,13 @@
 from src.models.message import Message
 
+topic_schema = {
+    "type": "object",
+    "properties": {
+        "topic_id": {"type": "string"}
+    },
+    "required": ["topic_id"],
+}
+
 class Topic:
     def __init__(self, topic_id):
         self.topic_id = topic_id

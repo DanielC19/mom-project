@@ -1,4 +1,4 @@
-from src.models.topics import Topic
+from src.models.topic import Topic
 from src.models.message import Message
 
 class TopicsService:
