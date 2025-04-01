@@ -12,7 +12,6 @@ class TopicsService:
         return False
 
     def publish_message(self, topic_id, data):
-        print(topic_id)
         if topic_id in self.topics:
             message = Message(**data, parent=topic_id)
             self.topics[topic_id].publish_message(message)

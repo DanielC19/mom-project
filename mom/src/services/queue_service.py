@@ -9,7 +9,7 @@ class QueueService:
         self.queues[queue.queue_id] = queue
 
     def get_queues(self):
-        return [queue.to_dict() for queue in self.queues.values()]
+        return [queue.to_dict()["queue_id"] for queue in self.queues.values()]
 
     def push_message(self, data, queue_id):
         try:
