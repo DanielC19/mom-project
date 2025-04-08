@@ -20,25 +20,34 @@ def create_app():
     return app
 
 def register_with_zookeeper(zk, port):
-    # Ensure the service path exists
     zk.ensure_path(HOSTS_PATH)
-
-    # Get the hostname or IP address of the current machine
     hostname = socket.gethostbyname(socket.gethostname())
     address = f"{hostname}:{port}"
-
-    # Register this MOM instance with a unique node in Zookeeper
     instance_name = f"{hostname}_{port}"
     node_path = f"{HOSTS_PATH}/{instance_name}"
-
-    # Check if the node already exists
-    if zk.exists(node_path):
-        print(f"Node {node_path} already exists. Skipping...")
-        return
-
-    # Create the node as ephemeral
-    zk.create(node_path, ephemeral=True)
+    if not zk.exists(node_path):
+        zk.create(node_path, ephemeral=True, value=address.encode())
     print(f"Registered MOM instance: {node_path} -> {address}")
+
+def update_hosts(self, children):
+    """Update the list of available MOM hosts."""
+    self.hosts = []
+    for child in children:
+        data, _ = self.zk.get(f"{HOSTS_PATH}/{child}")
+        self.hosts.append(data.decode())
+    print(f"Updated MOM hosts: {self.hosts}")
+
+def get_mom_host(self):
+    """Select a MOM host using round-robin or random selection."""
+    if not self.hosts:
+        raise Exception("No MOM hosts available")
+    return random.choice(self.hosts)  # Selección aleatoria
+
+class GRPCClient:
+    def __init__(self, host, port):
+        self.channel = grpc.insecure_channel(f"{host}:{port}")
+        self.topic_stub = mom_pb2_grpc.TopicServiceStub(self.channel)
+        self.queue_stub = mom_pb2_grpc.QueueServiceStub(self.channel)
 
 if __name__ == "__main__":
     # Initialize Kazoo client
