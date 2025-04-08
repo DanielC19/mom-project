@@ -13,7 +13,7 @@ class QueueService:
 
     def push_message(self, data, queue_id):
         try:
-            message = Message(**data, parent=queue_id)
+            message = Message(data["content"], parent=queue_id, sender=data["sender"])
             self.queues[queue_id].enqueue(message)
             return True
         except Exception as e:

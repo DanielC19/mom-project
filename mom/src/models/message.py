@@ -9,7 +9,7 @@ message_schema = {
     },
     "required": ["content"],
 }
-
+ 
 class Message:
     def __init__(self, content, parent, sender=None):
         self.message_id = self.generate_message_id(parent)

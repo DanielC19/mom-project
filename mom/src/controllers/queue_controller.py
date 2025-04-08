@@ -35,6 +35,3 @@ class QueueController:
         if not message:
             return generate_response(False, "Queue not found"), 404
         return generate_response(True, "Message pulled", message.to_dict()), 200
-
-
-
