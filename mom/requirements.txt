@@ -7,3 +7,5 @@ pytest
 python-dotenv
 jsonschema
 kazoo
+grpcio
+grpcio-tools

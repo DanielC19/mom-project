@@ -3,6 +3,7 @@ from src.services.grpc_client import GRPCClient
 import random
 import time
 import requests
+from google.protobuf.json_format import MessageToDict
 
 ZOOKEEPER_HOSTS = "127.0.0.1:2181"
 HOSTS_PATH = "/hosts_service"
@@ -44,8 +45,14 @@ class RoutingTier:
 
     def get_queues(self):
         """Get the list of queues."""
-        return list(self.queues.keys())
-
+        try:
+            response = self.grpc_client.list_queues()
+            data_dict = MessageToDict(response)
+            print(data_dict)
+            return {"data": data_dict["queues"], "success": True }
+        except Exception as e:
+            print(f"Failed to create queue via gRPC: {e}")
+            return {"success": False, "message": str(e)}
     def create_queue(self, queue_name, endpoint, data):
         """Create a new queue using gRPC."""
         try:
