@@ -6,5 +6,4 @@ requests
 pytest
 python-dotenv
 jsonschema
-logging
 kazoo

@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package mom;
+
+// Service for Topics
+service TopicService {
+    rpc CreateTopic (CreateTopicRequest) returns (Response);
+    rpc PublishMessage (PublishMessageRequest) returns (Response);
+    rpc Subscribe (SubscribeRequest) returns (Response);
+    rpc Unsubscribe (UnsubscribeRequest) returns (Response);
+    rpc ListTopics (Empty) returns (ListTopicsResponse);
+    rpc PullMessages (PullMessagesRequest) returns (MessagesResponse);
+}
+
+// Service for Queues
+service QueueService {
+    rpc CreateQueue (CreateQueueRequest) returns (Response);
+    rpc ListQueues (Empty) returns (ListQueuesResponse);
+    rpc PushMessage (PushMessageRequest) returns (Response);
+    rpc PullMessage (PullMessageRequest) returns (MessageResponse);
+}
+
+// Common messages
+message Response {
+    bool success = 1;
+    string message = 2;
+}
+
+message Empty {}
+
+message CreateTopicRequest {
+    string topic_id = 1;
+}
+
+message PublishMessageRequest {
+    string topic_id = 1;
+    string content = 2;
+    string sender = 3;
+}
+
+message SubscribeRequest {
+    string topic_id = 1;
+    string subscriber_id = 2;
+}
+
+message UnsubscribeRequest {
+    string topic_id = 1;
+    string subscriber_id = 2;
+}
+
+message ListTopicsResponse {
+    repeated string topics = 1;
+}
+
+message PullMessagesRequest {
+    string topic_id = 1;
+    string subscriber_id = 2;
+}
+
+message MessagesResponse {
+    repeated Message messages = 1;
+}
+
+message CreateQueueRequest {
+    string queue_id = 1;
+}
+
+message ListQueuesResponse {
+    repeated string queues = 1;
+}
+
+message PushMessageRequest {
+    string queue_id = 1;
+    string content = 2;
+    string sender = 3;
+}
+
+message PullMessageRequest {
+    string queue_id = 1;
+}
+
+message MessageResponse {
+    Message message = 1;
+}
+
+message Message {
+    string message_id = 1;
+    string parent = 2;
+    string content = 3;
+    string sender = 4;
+    string timestamp = 5;
+}
