@@ -52,6 +52,7 @@ function ChatView(){
     const fetchData = async ()=>{
       const Qdata = await queueAPI.getQueues();
       const tData = await topicAPI.getTopics();
+      
       if(tData.success) setTopics(tData.data);
       if(Qdata.success) setQueues(Qdata.data);
     }

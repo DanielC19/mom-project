@@ -30,14 +30,14 @@ export default function SidebarList({queues, openOver, selectChat, topics, selec
         </div>
       )
       ):topics.map((topic)=>(
-        <div key={topic.topic_id} className="queue-item"onClick={()=>{
-          if(!(topic.topic_id===selectedChat.id && selectedChat.type==="t")) setMessages([]);
+        <div key={topic.topicId} className="queue-item"onClick={()=>{
+          if(!(topic.topicId===selectedChat.id && selectedChat.type==="t")) setMessages([]);
             selectChat({
             type: "t",
-            id: topic.topic_id
+            id: topic.topicId
           })
                   }}>
-          <p className="queue-name">{topic.topic_id}</p>
+          <p className="queue-name">{topic.topicId}</p>
         </div>
       )
       )}

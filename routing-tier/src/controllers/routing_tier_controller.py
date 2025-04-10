@@ -9,6 +9,8 @@ ZOOKEEPER_HOSTS = "127.0.0.1:2181"
 HOSTS_PATH = "/hosts_service"
 QUEUE_PATH = "/queue_service"
 
+#TODO: add implementation for suscribe, unsuscribe and delete methots for topics api
+
 class RoutingTier:
     def __init__(self):
         self.grpc_client = GRPCClient()  # Initialize gRPC client
@@ -48,21 +50,62 @@ class RoutingTier:
         try:
             response = self.grpc_client.list_queues()
             data_dict = MessageToDict(response)
-            print(data_dict)
+            
             return {"data": data_dict["queues"], "success": True }
         except Exception as e:
             print(f"Failed to create queue via gRPC: {e}")
             return {"success": False, "message": str(e)}
+
     def create_queue(self, queue_name, endpoint, data):
         """Create a new queue using gRPC."""
         try:
             response = self.grpc_client.create_queue(queue_name)
-            print(f"Queue created via gRPC: {response.message}")
             return {"success": response.success, "message": response.message}
         except Exception as e:
             print(f"Failed to create queue via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
+    def create_topic(self, topic_name):
+        """Create a new topic using gRPC."""
+        try:
+            response = self.grpc_client.create_topic(topic_name)
+            return {"success": response.success, "message": response.message}
+        except Exception as e:
+            print(f"Failed to create topic via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+
+    def push_message_topic(self, topic_name, data):
+        """Push a message to a topic using gRPC."""
+        try:
+            response = self.grpc_client.publish_message(topic_name, data["content"], data["sender"])
+            return {"success": response.success, "message": response.message}
+        except Exception as e:
+            print(f"Failed to push message to topic via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+
+    def pull_message_topic(self, topic_name, user_id):
+        """Pull a message from a topic using gRPC."""
+        try:
+            response = self.grpc_client.pull_messages(topic_name, user_id)
+            if response:
+                data_dict = MessageToDict(response)
+                return {"success": True, "data": data_dict["messages"], "message": "Message pulled successfully"}
+            else:
+                return {"success": False, "message": "No message found"}
+        except Exception as e:
+            print(f"Failed to pull message from topic via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+    
+    def get_topics(self):
+        """Get the list of queues."""
+        try:
+            response = self.grpc_client.list_topics()
+
+            data_dict = MessageToDict(response)
+            return {"data": data_dict["topics"], "success": True, "message": "Topics listed succesfully" }
+        except Exception as e:
+            return {"success": False, "message": str(e)}
+        
     def handle_failover(self, queue_name):
         """Handle failover for a queue when the leader or follower goes down."""
         if queue_name not in self.queues:
@@ -123,7 +166,7 @@ class RoutingTier:
             response = self.grpc_client.pull_message(queue_id)
             if response:
                 data_dict = MessageToDict(response)
-                return {"success": True, "message": data_dict["message"]}
+                return {"success": True, "data": data_dict["message"], "message": "Message pulled successfully"}
             else:
                 return {"success": False, "message": "No message found"}
         except Exception as e:

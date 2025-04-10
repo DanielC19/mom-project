@@ -11,8 +11,7 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
     def CreateTopic(self, request, context):
 
         data_dict = MessageToDict(request)
-        print(data_dict)
-        success = self.service.create_topic(data_dict["topic_id"])
+        success = self.service.create_topic(data_dict["topicId"])
         message = "Topic created" if success else "Topic already exists"
         return mom_pb2.Response(success=success, message=message)
 
@@ -36,6 +35,7 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
 
     def ListTopics(self, request, context):
         topics = self.service.get_topics()
+       
         return mom_pb2.ListTopicsResponse(topics=topics)
 
     def PullMessages(self, request, context):

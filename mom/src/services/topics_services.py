@@ -29,7 +29,7 @@ class TopicsService:
         return False
 
     def get_topics(self):
-        return [topic.to_dict() for topic in self.topics.values()]
+        return [{"topic_id": topic.to_dict()["topic_id"]} for topic in self.topics.values()]
 
     def pull_messages(self, topic_id, subscriber_id):
         if topic_id in self.topics:
