@@ -9,3 +9,4 @@ jsonschema
 kazoo
 grpcio
 grpcio-tools
+watchdog

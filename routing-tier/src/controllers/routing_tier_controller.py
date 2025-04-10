@@ -106,6 +106,30 @@ class RoutingTier:
                 self.handle_failover(queue_name)
             time.sleep(5)
 
+    def push_message_queue(self, queue_id, data):
+
+        """Push a message to the queue using gRPC."""
+        try:
+            response = self.grpc_client.push_message(queue_id, data["content"], data["sender"])
+            print(f"Message pushed via gRPC: {response.message}")
+            return {"success": response.success, "message": response.message}
+        except Exception as e:
+            print(f"Failed to push message via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+        
+    def pull_message_queue(self, queue_id):
+        """Pull a message from the queue using gRPC."""
+        try:
+            response = self.grpc_client.pull_message(queue_id)
+            if response:
+                data_dict = MessageToDict(response)
+                return {"success": True, "message": data_dict["message"]}
+            else:
+                return {"success": False, "message": "No message found"}
+        except Exception as e:
+            print(f"Failed to pull message via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+
     def route_request(self, queue_name, endpoint, method="GET", data=None):
         """Route a request to the MOM using gRPC."""
         try:
