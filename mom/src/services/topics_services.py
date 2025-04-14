@@ -35,3 +35,9 @@ class TopicsService:
         if topic_id in self.topics:
             return self.topics[topic_id].pull_messages(subscriber_id)
         return []
+
+    def delete_topic(self, topic_id):
+        if topic_id in self.topics:
+            del self.topics[topic_id]
+            return True
+        return False

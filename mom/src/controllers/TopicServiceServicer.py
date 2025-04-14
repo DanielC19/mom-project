@@ -49,3 +49,8 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
                 timestamp=msg.timestamp
             ) for msg in messages
         ])
+
+    def DeleteTopic(self, request, context):
+        success = self.service.delete_topic(request.topic_id)
+        message = "Topic deleted" if success else "Topic not found"
+        return mom_pb2.Response(success=success, message=message)

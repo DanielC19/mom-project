@@ -10,6 +10,7 @@ service TopicService {
     rpc Unsubscribe (UnsubscribeRequest) returns (Response);
     rpc ListTopics (Empty) returns (ListTopicsResponse);
     rpc PullMessages (PullMessagesRequest) returns (MessagesResponse);
+    rpc DeleteTopic (DeleteTopicRequest) returns (Response);
 }
 
 // Service for Queues
@@ -93,4 +94,8 @@ message Message {
     string content = 3;
     string sender = 4;
     string timestamp = 5;
+}
+
+message DeleteTopicRequest {
+    string topic_id = 1;
 }

@@ -35,9 +35,22 @@ class GRPCClient:
         request = mom_pb2.SubscribeRequest(topic_id=topic_id, subscriber_id=subscriber_id)
         return self.topic_stub.Subscribe(request)
 
+    def unsubscribe(self, topic_id, subscriber_id):
+        request = mom_pb2.UnsubscribeRequest(topic_id=topic_id, subscriber_id=subscriber_id)
+        return self.topic_stub.Unsubscribe(request)
+
+    def delete_topic(self, topic_id):
+        request = mom_pb2.DeleteTopicRequest(topic_id=topic_id)
+        return self.topic_stub.DeleteTopic(request)
+
+    def subscribe(self, topic_id, subscriber_id):
+        request = mom_pb2.SubscribeRequest(topic_id=topic_id, subscriber_id=subscriber_id)
+        return self.topic_stub.Subscribe(request)
+
     def pull_messages(self, topic_id, subscriber_id):
         request = mom_pb2.PullMessagesRequest(topic_id=topic_id, subscriber_id=subscriber_id)
         return self.topic_stub.PullMessages(request)
-    def  list_topics(self):
+
+    def list_topics(self):
         request = mom_pb2.Empty()
         return self.topic_stub.ListTopics(request)

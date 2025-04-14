@@ -192,5 +192,29 @@ class RoutingTier:
             print(f"Failed to route request via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
+    def subscribe_topic(self, topic_id, subscriber_id):
+        try:
+            response = self.grpc_client.subscribe(topic_id, subscriber_id)
+            return {"success": response.success, "message": response.message}
+        except Exception as e:
+            print(f"Failed to subscribe to topic via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+
+    def unsubscribe_topic(self, topic_id, subscriber_id):
+        try:
+            response = self.grpc_client.unsubscribe(topic_id, subscriber_id)
+            return {"success": response.success, "message": response.message}
+        except Exception as e:
+            print(f"Failed to unsubscribe from topic via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+
+    def delete_topic(self, topic_id):
+        try:
+            response = self.grpc_client.delete_topic(topic_id)
+            return {"success": response.success, "message": response.message}
+        except Exception as e:
+            print(f"Failed to delete topic via gRPC: {e}")
+            return {"success": False, "message": str(e)}
+
 
 

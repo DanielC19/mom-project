@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import mom.src.utils.mom_pb2 as mom__pb2
+import src.utils.mom_pb2 as mom__pb2
 
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
@@ -65,6 +65,11 @@ class TopicServiceStub(object):
                 request_serializer=mom__pb2.PullMessagesRequest.SerializeToString,
                 response_deserializer=mom__pb2.MessagesResponse.FromString,
                 _registered_method=True)
+        self.DeleteTopic = channel.unary_unary(
+                '/mom.TopicService/DeleteTopic',
+                request_serializer=mom__pb2.DeleteTopicRequest.SerializeToString,
+                response_deserializer=mom__pb2.Response.FromString,
+                _registered_method=True)
 
 
 class TopicServiceServicer(object):
@@ -107,6 +112,12 @@ class TopicServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteTopic(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TopicServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -139,6 +150,11 @@ def add_TopicServiceServicer_to_server(servicer, server):
                     servicer.PullMessages,
                     request_deserializer=mom__pb2.PullMessagesRequest.FromString,
                     response_serializer=mom__pb2.MessagesResponse.SerializeToString,
+            ),
+            'DeleteTopic': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteTopic,
+                    request_deserializer=mom__pb2.DeleteTopicRequest.FromString,
+                    response_serializer=mom__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -304,6 +320,33 @@ class TopicService(object):
             '/mom.TopicService/PullMessages',
             mom__pb2.PullMessagesRequest.SerializeToString,
             mom__pb2.MessagesResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteTopic(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/mom.TopicService/DeleteTopic',
+            mom__pb2.DeleteTopicRequest.SerializeToString,
+            mom__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,

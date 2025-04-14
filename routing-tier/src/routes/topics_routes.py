@@ -44,3 +44,30 @@ def list_topics():
     except Exception as e:
         log_error(f"Error listing topics: {str(e)}")
         return generate_response(False, "Failed to retrieve topics")
+
+@topic_bp.route('/topic/<topic_id>/subscribe/<user_id>', methods=['POST'])
+def subscribe_topic(topic_id, user_id):
+    try:
+        response = routing_tier.subscribe_topic(topic_id, user_id)
+        return generate_response(response["success"], response["message"])
+    except Exception as e:
+        log_error(f"Error subscribing to topic {topic_id}: {str(e)}")
+        return generate_response(False, "Failed to subscribe to topic")
+
+@topic_bp.route('/topic/<topic_id>/unsubscribe/<user_id>', methods=['POST'])
+def unsubscribe_topic(topic_id, user_id):
+    try:
+        response = routing_tier.unsubscribe_topic(topic_id, user_id)
+        return generate_response(response["success"], response["message"])
+    except Exception as e:
+        log_error(f"Error unsubscribing from topic {topic_id}: {str(e)}")
+        return generate_response(False, "Failed to unsubscribe from topic")
+
+@topic_bp.route('/topic/<topic_id>', methods=['DELETE'])
+def delete_topic(topic_id):
+    try:
+        response = routing_tier.delete_topic(topic_id)
+        return generate_response(response["success"], response["message"])
+    except Exception as e:
+        log_error(f"Error deleting topic {topic_id}: {str(e)}")
+        return generate_response(False, "Failed to delete topic")
