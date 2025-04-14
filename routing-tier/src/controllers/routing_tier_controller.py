@@ -50,8 +50,8 @@ class RoutingTier:
         try:
             response = self.grpc_client.list_queues()
             data_dict = MessageToDict(response)
-            queues = data_dict.get("queues", [])  # Manejar caso vacío
-            return {"data": queues, "success": True}
+            
+            return {"data": data_dict["queues"], "success": True }
         except Exception as e:
             print(f"Failed to create queue via gRPC: {e}")
             return {"success": False, "message": str(e)}
@@ -100,9 +100,9 @@ class RoutingTier:
         """Get the list of queues."""
         try:
             response = self.grpc_client.list_topics()
+
             data_dict = MessageToDict(response)
-            topics = data_dict.get("topics", [])  # Manejar caso vacío
-            return {"data": topics, "success": True, "message": "Topics listed successfully"}
+            return {"data": data_dict["topics"], "success": True, "message": "Topics listed succesfully" }
         except Exception as e:
             return {"success": False, "message": str(e)}
         

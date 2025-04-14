@@ -35,9 +35,8 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
 
     def ListTopics(self, request, context):
         topics = self.service.get_topics()
-        return mom_pb2.ListTopicsResponse(topics=[
-            mom_pb2.Topic(topic_id=topic["topic_id"]) for topic in topics
-        ])
+       
+        return mom_pb2.ListTopicsResponse(topics=topics)
 
     def PullMessages(self, request, context):
         messages = self.service.pull_messages(request.topic_id, request.subscriber_id)
