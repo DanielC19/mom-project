@@ -5,11 +5,11 @@ class QueueService:
     def __init__(self):
         self.queues = {}
 
-    def create_queue(self, queue:Queue):
-        self.queues[queue["queue_id"]] = Queue(queue["queue_id"])
+    def create_queue(self, queue:Queue, autor):
+        self.queues[queue["queue_id"]] = Queue(queue["queue_id"], autor)
 
     def get_queues(self):
-        return [queue.to_dict()["queue_id"] for queue in self.queues.values()] 
+        return [{"queue_id": queue.to_dict()["queue_id"], "autor": queue.to_dict()["autor"]} for queue in self.queues.values()] 
 
     def push_message(self, data, queue_id):
         try:

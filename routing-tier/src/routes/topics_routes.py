@@ -14,7 +14,7 @@ def create_topic():
     try:
         current_user = get_jwt_identity()
         data = request.json
-        response = routing_tier.create_topic(data["topic_id"])
+        response = routing_tier.create_topic(data["topic_id"], current_user)
         return generate_response(response["success"], response["message"])
     except Exception as e:
         log_error(f"Error creating topic: {str(e)}")
@@ -81,7 +81,7 @@ def unsubscribe_topic(topic_id, user_id):
 def delete_topic(topic_id):
     try:
         current_user = get_jwt_identity()
-        response = routing_tier.delete_topic(topic_id)
+        response = routing_tier.delete_topic(topic_id, current_user)
         return generate_response(response["success"], response["message"])
     except Exception as e:
         log_error(f"Error deleting topic {topic_id}: {str(e)}")

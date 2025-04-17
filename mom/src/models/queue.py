@@ -9,13 +9,15 @@ queue_schema = {
 }
  
 class Queue:
-    def __init__(self, queue_id):
+    def __init__(self, queue_id, autor):
         self.queue_id = queue_id
+        self.autor= autor
         self.messages = []
 
     def to_dict(self):
         return {
             'queue_id': self.queue_id,
+            'autor': self.autor,
             'messages': [message.to_dict() for message in self.messages]
         }
 

@@ -10,7 +10,8 @@ queue_bp = Blueprint('queue', __name__)
 def create_queue():
     try:
         data = request.json
-        response = routing_tier.create_queue(data["queue_id"], "queue", data)
+        user = get_jwt_identity()
+        response = routing_tier.create_queue(data["queue_id"], "queue", data, user)
         return generate_response(response["success"], response["message"])
     except Exception as e:
         log_error(f"Error creating queue: {str(e)}")

@@ -9,9 +9,8 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
         self.service = TopicsService()
 
     def CreateTopic(self, request, context):
-
         data_dict = MessageToDict(request)
-        success = self.service.create_topic(data_dict["topicId"])
+        success = self.service.create_topic(data_dict["topicId"], data_dict["user"])
         message = "Topic created" if success else "Topic already exists"
         return mom_pb2.Response(success=success, message=message)
 
@@ -35,7 +34,8 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
 
     def ListTopics(self, request, context):
         topics = self.service.get_topics()
-       
+        print(f"Topics: {topics}")
+
         return mom_pb2.ListTopicsResponse(topics=topics)
 
     def PullMessages(self, request, context):
@@ -51,6 +51,7 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
         ])
 
     def DeleteTopic(self, request, context):
+        #TODO: review that only the creator be capablke to delete
         success = self.service.delete_topic(request.topic_id)
         message = "Topic deleted" if success else "Topic not found"
         return mom_pb2.Response(success=success, message=message)

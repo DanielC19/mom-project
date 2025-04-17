@@ -52,10 +52,16 @@ message UnsubscribeRequest {
 
 message Topic {
     string topic_id = 1;
+    string autor = 2;
+}
+
+message Queue {
+    string topic_id = 1;
+    string autor = 2;
 }
 
 message ListTopicsResponse {
-    repeated Group topics = 1;
+    repeated Topic topics = 1;
 }
 
 message PullMessagesRequest {
@@ -73,7 +79,7 @@ message CreateQueueRequest {
 }
 
 message ListQueuesResponse {
-    repeated Group queues = 1;
+    repeated Queue queues = 1;
 }
 
 message Group {

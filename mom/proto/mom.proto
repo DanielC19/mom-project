@@ -31,6 +31,7 @@ message Empty {}
 
 message CreateTopicRequest {
     string topic_id = 1;
+    string user = 2;
 }
 
 message PublishMessageRequest {
@@ -51,6 +52,12 @@ message UnsubscribeRequest {
 
 message Topic {
     string topic_id = 1;
+    string autor = 2;
+}
+
+message Queue {
+    string queue_id = 1;
+    string autor = 2;
 }
 
 message ListTopicsResponse {
@@ -68,10 +75,11 @@ message MessagesResponse {
 
 message CreateQueueRequest {
     string queue_id = 1;
+    string user = 2;
 }
 
 message ListQueuesResponse {
-    repeated string queues = 1;
+    repeated Queue queues = 1;
 }
 
 message PushMessageRequest {
@@ -98,4 +106,5 @@ message Message {
 
 message DeleteTopicRequest {
     string topic_id = 1;
+    string user = 2;
 }

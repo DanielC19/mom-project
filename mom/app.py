@@ -13,7 +13,7 @@ import time
 from src.controllers.TopicServiceServicer import TopicServiceServicer
 from src.controllers.QueueServiceServicer import QueueServiceServicer
 
-ZOOKEEPER_HOSTS = "127.0.0.1:2181"
+ZOOKEEPER_HOSTS = "127.0.0.1:2181" 
 HOSTS_PATH = "/hosts_service"
 
 class RestartHandler(FileSystemEventHandler):

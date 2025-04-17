@@ -9,14 +9,16 @@ topic_schema = {
 }
  
 class Topic:
-    def __init__(self, topic_id):
+    def __init__(self, topic_id, autor):
         self.topic_id = topic_id
+        self.autor = autor
         self.messages = []
         self.subscribers = {}  # Cambiado a diccionario para manejar colas por suscriptor
 
     def to_dict(self):
         return {
             'topic_id': self.topic_id,
+            'autor': self.autor,
             'messages': [message.to_dict() for message in self.messages]
         }
 

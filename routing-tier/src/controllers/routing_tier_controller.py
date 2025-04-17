@@ -9,7 +9,6 @@ ZOOKEEPER_HOSTS = "127.0.0.1:2181"
 HOSTS_PATH = "/hosts_service"
 QUEUE_PATH = "/queue_service"
 
-#TODO: add implementation for suscribe, unsuscribe and delete methots for topics api
 
 class RoutingTier:
     def __init__(self):
@@ -56,19 +55,19 @@ class RoutingTier:
             print(f"Failed to create queue via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
-    def create_queue(self, queue_name, endpoint, data):
+    def create_queue(self, queue_name, endpoint, data, user):
         """Create a new queue using gRPC."""
         try:
-            response = self.grpc_client.create_queue(queue_name)
+            response = self.grpc_client.create_queue(queue_name, user)
             return {"success": response.success, "message": response.message}
         except Exception as e:
             print(f"Failed to create queue via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
-    def create_topic(self, topic_name):
+    def create_topic(self, topic_name, user):
         """Create a new topic using gRPC."""
         try:
-            response = self.grpc_client.create_topic(topic_name)
+            response = self.grpc_client.create_topic(topic_name, user)
             return {"success": response.success, "message": response.message}
         except Exception as e:
             print(f"Failed to create topic via gRPC: {e}")
@@ -100,10 +99,11 @@ class RoutingTier:
         """Get the list of queues."""
         try:
             response = self.grpc_client.list_topics()
-
+            print(response)
             data_dict = MessageToDict(response)
             return {"data": data_dict["topics"], "success": True, "message": "Topics listed succesfully" }
         except Exception as e:
+            print(e)
             return {"success": False, "message": str(e)}
         
     def handle_failover(self, queue_name):
@@ -208,9 +208,9 @@ class RoutingTier:
             print(f"Failed to unsubscribe from topic via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
-    def delete_topic(self, topic_id):
+    def delete_topic(self, topic_id, user):
         try:
-            response = self.grpc_client.delete_topic(topic_id)
+            response = self.grpc_client.delete_topic(topic_id, user)
             return {"success": response.success, "message": response.message}
         except Exception as e:
             print(f"Failed to delete topic via gRPC: {e}")

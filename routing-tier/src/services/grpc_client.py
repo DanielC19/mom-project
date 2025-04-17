@@ -7,8 +7,8 @@ class GRPCClient:
         self.topic_stub = mom_pb2_grpc.TopicServiceStub(self.channel)
         self.queue_stub = mom_pb2_grpc.QueueServiceStub(self.channel)
 
-    def create_queue(self, queue_id):
-        request = mom_pb2.CreateQueueRequest(queue_id=queue_id)
+    def create_queue(self, queue_id, user):
+        request = mom_pb2.CreateQueueRequest(queue_id=queue_id, user=user)
         return self.queue_stub.CreateQueue(request)
 
     def list_queues(self):
@@ -23,8 +23,8 @@ class GRPCClient:
         request = mom_pb2.PullMessageRequest(queue_id=queue_id)
         return self.queue_stub.PullMessage(request)
 
-    def create_topic(self, topic_id):
-        request = mom_pb2.CreateTopicRequest(topic_id=topic_id)
+    def create_topic(self, topic_id, user):
+        request = mom_pb2.CreateTopicRequest(topic_id=topic_id, user=user)
         return self.topic_stub.CreateTopic(request)
 
     def publish_message(self, topic_id, content, sender):
@@ -39,8 +39,8 @@ class GRPCClient:
         request = mom_pb2.UnsubscribeRequest(topic_id=topic_id, subscriber_id=subscriber_id)
         return self.topic_stub.Unsubscribe(request)
 
-    def delete_topic(self, topic_id):
-        request = mom_pb2.DeleteTopicRequest(topic_id=topic_id)
+    def delete_topic(self, topic_id, user):
+        request = mom_pb2.DeleteTopicRequest(topic_id=topic_id, user=user)
         return self.topic_stub.DeleteTopic(request)
 
     def subscribe(self, topic_id, subscriber_id):

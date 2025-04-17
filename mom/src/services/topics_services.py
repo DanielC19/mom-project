@@ -5,9 +5,9 @@ class TopicsService:
     def __init__(self):
         self.topics = {}
 
-    def create_topic(self, topic_id):
+    def create_topic(self, topic_id, autor):
         if topic_id not in self.topics:
-            self.topics[topic_id] = Topic(topic_id)
+            self.topics[topic_id] = Topic(topic_id, autor)
             return True
         return False
 
@@ -29,7 +29,7 @@ class TopicsService:
         return False
 
     def get_topics(self):
-        return [{"topic_id": topic.to_dict()["topic_id"]} for topic in self.topics.values()]
+        return [{"topic_id": topic.to_dict()["topic_id"], "autor": topic.to_dict()["autor"]} for topic in self.topics.values()]
 
     def pull_messages(self, topic_id, subscriber_id):
         if topic_id in self.topics:

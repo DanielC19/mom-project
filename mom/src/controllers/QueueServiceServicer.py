@@ -10,9 +10,8 @@ class QueueServiceServicer(mom_pb2_grpc.QueueServiceServicer):
         self.service = QueueService()
 
     def CreateQueue(self, request, context):
-        print("Creating queue...")
         data_dict = MessageToDict(request)
-        self.service.create_queue({"queue_id": data_dict["queueId"]})
+        self.service.create_queue({"queue_id": data_dict["queueId"]}, data_dict["user"])
         return mom_pb2.Response(success=True, message="Queue created")
 
     def ListQueues(self, request, context):
