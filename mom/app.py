@@ -22,12 +22,13 @@ class RestartHandler(FileSystemEventHandler):
             print(f"Detected change in {event.src_path}. Restarting application...")
             os.execv(sys.executable, ['python'] + sys.argv)
 
-def serve():
+def serve(port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     mom_pb2_grpc.add_TopicServiceServicer_to_server(TopicServiceServicer(), server)
     mom_pb2_grpc.add_QueueServiceServicer_to_server(QueueServiceServicer(), server)
     server.add_insecure_port("[::]:50051")
-    print("gRPC server running on port 50051")
+    server.add_insecure_port(f"[::]:{port}")
+    print(f"gRPC server running on port 50051 and {port}")
     server.start()
     server.wait_for_termination()
 
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     observer.start()
 
     try:
-        serve()
+        serve(port)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
