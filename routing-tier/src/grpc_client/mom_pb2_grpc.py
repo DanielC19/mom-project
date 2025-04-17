@@ -4,6 +4,7 @@ import grpc
 import warnings
 
 import src.grpc_client.mom_pb2 as mom__pb2
+
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
