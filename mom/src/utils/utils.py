@@ -9,7 +9,7 @@ def validate_input(data, schema):
 
 def generate_response(success, message, data=None):
     from flask import jsonify
-    
+
     response = {
         "success": success,
         "message": message,

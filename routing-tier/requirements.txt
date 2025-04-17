@@ -5,5 +5,5 @@ requests
 grpcio
 grpcio-tools
 flask_sqlalchemy
-werkzeug 
+werkzeug
 flask-jwt-extended
