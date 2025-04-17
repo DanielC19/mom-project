@@ -11,8 +11,8 @@ def create_queue():
     try:
         data = request.json
         user = get_jwt_identity()
-        response = routing_tier.create_queue(data["queue_id"], "queue", data, user)
-        return generate_response(response["success"], response["message"])
+        response = routing_tier.create_queue(data["queue_id"], user)
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error creating queue: {str(e)}")
         return generate_response(False, "Failed to create queue")
@@ -22,7 +22,7 @@ def create_queue():
 def list_queues():
     try:
         response = routing_tier.get_queues()
-        return generate_response(True, "Queues retrieved successfully", response["data"])
+        return generate_response(True, "Resources retrived successfully", response)
     except Exception as e:
         log_error(f"Error listing queues: {str(e)}")
         return generate_response(False, "Failed to retrieve queues")
@@ -34,7 +34,7 @@ def push_message(queue_id):
         data = request.json
         user = get_jwt_identity()
         response = routing_tier.push_message_queue(queue_id, data, user)
-        return generate_response(True, "Message pushed successfully")
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error pushing message to queue {queue_id}: {str(e)}")
         return generate_response(False, "Failed to push message")
@@ -44,10 +44,7 @@ def push_message(queue_id):
 def pull_message(queue_id):
     try:
         response = routing_tier.pull_message_queue(queue_id)
-
-        if(response["success"]):
-            return generate_response(response["success"], response["message"], response["data"])
-        return generate_response(response["success"], response["message"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error pulling message from queue {queue_id}: {str(e)}")
         return generate_response(False, "Failed to pull message")

@@ -15,7 +15,7 @@ def create_topic():
         current_user = get_jwt_identity()
         data = request.json
         response = routing_tier.create_topic(data["topic_id"], current_user)
-        return generate_response(response["success"], response["message"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error creating topic: {str(e)}")
         return generate_response(False, "Failed to create topic")
@@ -27,7 +27,7 @@ def publish_message(topic_id):
         current_user = get_jwt_identity()
         data = request.json
         response = routing_tier.push_message_topic(topic_id, data, current_user)
-        return generate_response(response["success"], response["message"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error publishing message to topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to publish message to topic")
@@ -38,7 +38,7 @@ def pull_messages(topic_id):
     try:
         current_user = get_jwt_identity()
         response = routing_tier.pull_message_topic(topic_id, current_user)
-        return generate_response(response["success"], response["message"], response["data"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error pulling message from topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to pull message from topic")
@@ -49,7 +49,7 @@ def list_topics():
     try:
         current_user = get_jwt_identity()
         response = routing_tier.get_topics()  # Assuming topics are listed similarly to queues
-        return generate_response(response["success"], response["message"], response["data"])
+        return generate_response(True, "Resources retrieved successfully", response)
     except Exception as e:
         log_error(f"Error listing topics: {str(e)}")
         return generate_response(False, "Failed to retrieve topics")
@@ -60,7 +60,7 @@ def subscribe_topic(topic_id):
     try:
         current_user = get_jwt_identity()
         response = routing_tier.subscribe_topic(topic_id, current_user)
-        return generate_response(response["success"], response["message"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error subscribing to topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to subscribe to topic")
@@ -71,7 +71,7 @@ def unsubscribe_topic(topic_id):
     try:
         current_user = get_jwt_identity()
         response = routing_tier.unsubscribe_topic(topic_id, current_user)
-        return generate_response(response["success"], response["message"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error unsubscribing from topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to unsubscribe from topic")
@@ -82,7 +82,7 @@ def delete_topic(topic_id):
     try:
         current_user = get_jwt_identity()
         response = routing_tier.delete_topic(topic_id, current_user)
-        return generate_response(response["success"], response["message"])
+        return generate_response(**response)
     except Exception as e:
         log_error(f"Error deleting topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to delete topic")
