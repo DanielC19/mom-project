@@ -4,3 +4,6 @@ kazoo
 requests
 grpcio
 grpcio-tools
+flask_sqlalchemy
+werkzeug 
+flask-jwt-extended

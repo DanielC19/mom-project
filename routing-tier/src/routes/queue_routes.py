@@ -1,10 +1,12 @@
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.services.routing_tier_service import routing_tier  # Import the global instance
 from src.utils.response_utils import generate_response, log_error  # Import utility functions
 
 queue_bp = Blueprint('queue', __name__)
 
 @queue_bp.route('/queue', methods=['POST'])
+@jwt_required()
 def create_queue():
     try:
         data = request.json
@@ -15,6 +17,7 @@ def create_queue():
         return generate_response(False, "Failed to create queue")
 
 @queue_bp.route('/queue', methods=['GET'])
+@jwt_required()
 def list_queues():
     try:
         response = routing_tier.get_queues()
@@ -24,6 +27,7 @@ def list_queues():
         return generate_response(False, "Failed to retrieve queues")
 
 @queue_bp.route('/queue/<queue_id>', methods=['PUT'])
+@jwt_required()
 def push_message(queue_id):
     try:
         data = request.json
@@ -34,6 +38,7 @@ def push_message(queue_id):
         return generate_response(False, "Failed to push message")
 
 @queue_bp.route('/queue/<queue_id>', methods=['GET'])
+@jwt_required()
 def pull_message(queue_id):
     try:
         response = routing_tier.pull_message_queue(queue_id)
