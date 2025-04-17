@@ -1,71 +1,70 @@
 import config from "../config/index"
 
-const create= async (topic_id)=>{
-    const {data} = await config.API.post("/topic",{
-        topic_id: topic_id
-    }).catch(err=>{
+const create = async (token, topic_id) => {
+    const {data} = await config.API.post("/topic",
+        { topic_id: topic_id },
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         console.log(err);
         return { data: {
-                success: false,
-                message: err.message
-                }
-            }
-    });
-
-    return data;
-}
-
-const getTopics = async ()=>{
-    const {data} = await config.API.get("/topics")
-    .catch(err=>{
-        return { data: {
-            success:false,
+            success: false,
             message: err.message
-            }
-        }
+        } }
     });
-    
     return data;
 }
 
-
-const getMessages = async (topic_id, user)=>{
-    const {data} = await config.API(`/topic/${topic_id}/pull/${user}`)
-    .catch(err=>{
+const getTopics = async (token) => {
+    const {data} = await config.API.get("/topics",
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
-            }
-        }
+        } }
     });
     return data;
 }
 
-const sendMessage = async (quueId, message, user)=>{
-    const {data} = await config.API.post(`/topic/${quueId}/publish`, { content: message, sender: user })
-    .catch(err=>{
+const getMessages = async (token, topic_id) => {
+    const {data} = await config.API.get(`/topic/${topic_id}/pull`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
-            }
-        }
+        } }
     });
     return data;
 }
 
-const suscribe = async (topicId, user)=>{
-    const {data} = await config.API.post(`/topic/${topicId}/subscribe/${user}`)
-    .catch(err=>{
+const sendMessage = async (token, quueId, message) => {
+    const {data} = await config.API.post(`/topic/${quueId}/publish`,
+        { content: message },
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
-            }
-        }
+        } }
     });
     return data;
 }
 
-const methots ={
+const suscribe = async (token, topicId) => {
+    const {data} = await config.API.post(`/topic/${topicId}/subscribe`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
+        return { data: {
+            success: false,
+            message: err.message
+        } }
+    });
+    return data;
+}
+
+const methots = {
     create,
     getMessages,
     sendMessage,

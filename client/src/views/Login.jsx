@@ -1,5 +1,5 @@
 
-import axios from 'axios';
+import userAPI from "../services/user";
 // import '../styles/tailwind.css';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,18 +18,19 @@ function Login({ setUser }) {
     setLoginState({...loginState, [event.target.id]: event.target.value})
   }
 
-  const handleSubmit = event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    axios.post('/api/login', loginState).then(
-      // On success
-      ({ data }) => {
-        //
-      },
-      // On error
-      ({ response }) => {
-        //
-      }
-    );
+    userAPI.logIn(loginState.name, loginState.password)
+      .then(res => {
+        if (res.success) {
+          navigate(`/chat?user=${res.token}`);
+        } else {
+          setErrorState(res.message);
+        }
+      })
+      .catch(err => {
+        setErrorState(err.message);
+      });
   }
 
   return(
@@ -40,7 +41,7 @@ function Login({ setUser }) {
       title="Inicia sesión"
       subtitle="¿Aún no tienes cuenta?"
       link="Regístrate"
-      linkUrl="/register"
+      linkUrl="/register" 
       fields={loginFields}
       buttonLabel="Iniciar sesión"
       error={errorState}

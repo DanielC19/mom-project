@@ -32,7 +32,8 @@ def list_queues():
 def push_message(queue_id):
     try:
         data = request.json
-        response = routing_tier.push_message_queue(queue_id, data)
+        user = get_jwt_identity()
+        response = routing_tier.push_message_queue(queue_id, data, user)
         return generate_response(True, "Message pushed successfully")
     except Exception as e:
         log_error(f"Error pushing message to queue {queue_id}: {str(e)}")

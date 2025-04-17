@@ -1,4 +1,4 @@
-import axios from 'axios';
+import userAPI from "../services/user";
 // import '../styles/tailwind.css';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,16 +19,17 @@ function Register({ setUser }) {
 
   const handleSubmit = event => {
     event.preventDefault();
-    axios.post('/api/register', registerState).then(
-      // On success
-      ({response}) => {
-        //
-      },
-      // On error
-      ({response}) => {
-        //
-      }
-    );
+    userAPI.create(registerState.name, registerState.password)
+      .then(response => {
+        if (response.success) {
+          navigate(`/chat?user=${response.token}`);
+        } else {
+          setErrorState(response.message);
+        }
+      })
+      .catch(error => {
+        setErrorState(error.response.data.message);
+      });
   }
 
   return(
@@ -39,7 +40,7 @@ function Register({ setUser }) {
       title="Crea una cuenta"
       subtitle="¿Ya tienes una?"
       link="Inicia sesión"
-      linkUrl="/login"
+      linkUrl="/"
       fields={registerFields}
       buttonLabel="Regístrate"
       error={errorState}

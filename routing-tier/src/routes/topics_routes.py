@@ -26,18 +26,18 @@ def publish_message(topic_id):
     try:
         current_user = get_jwt_identity()
         data = request.json
-        response = routing_tier.push_message_topic(topic_id, data)
+        response = routing_tier.push_message_topic(topic_id, data, current_user)
         return generate_response(response["success"], response["message"])
     except Exception as e:
         log_error(f"Error publishing message to topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to publish message to topic")
 
-@topic_bp.route('/topic/<topic_id>/pull/<user_id>', methods=['GET'])
+@topic_bp.route('/topic/<topic_id>/pull', methods=['GET'])
 @jwt_required()
-def pull_messages(topic_id, user_id):
+def pull_messages(topic_id):
     try:
         current_user = get_jwt_identity()
-        response = routing_tier.pull_message_topic(topic_id, user_id)
+        response = routing_tier.pull_message_topic(topic_id, current_user)
         return generate_response(response["success"], response["message"], response["data"])
     except Exception as e:
         log_error(f"Error pulling message from topic {topic_id}: {str(e)}")
@@ -54,23 +54,23 @@ def list_topics():
         log_error(f"Error listing topics: {str(e)}")
         return generate_response(False, "Failed to retrieve topics")
 
-@topic_bp.route('/topic/<topic_id>/subscribe/<user_id>', methods=['POST'])
+@topic_bp.route('/topic/<topic_id>/subscribe', methods=['POST'])
 @jwt_required()
-def subscribe_topic(topic_id, user_id):
+def subscribe_topic(topic_id):
     try:
         current_user = get_jwt_identity()
-        response = routing_tier.subscribe_topic(topic_id, user_id)
+        response = routing_tier.subscribe_topic(topic_id, current_user)
         return generate_response(response["success"], response["message"])
     except Exception as e:
         log_error(f"Error subscribing to topic {topic_id}: {str(e)}")
         return generate_response(False, "Failed to subscribe to topic")
 
-@topic_bp.route('/topic/<topic_id>/unsubscribe/<user_id>', methods=['POST'])
+@topic_bp.route('/topic/<topic_id>/unsubscribe', methods=['POST'])
 @jwt_required()
-def unsubscribe_topic(topic_id, user_id):
+def unsubscribe_topic(topic_id):
     try:
         current_user = get_jwt_identity()
-        response = routing_tier.unsubscribe_topic(topic_id, user_id)
+        response = routing_tier.unsubscribe_topic(topic_id, current_user)
         return generate_response(response["success"], response["message"])
     except Exception as e:
         log_error(f"Error unsubscribing from topic {topic_id}: {str(e)}")

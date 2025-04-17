@@ -2,7 +2,7 @@
 import { Plus } from "lucide-react";
 import "../styles/main.css";
 
-export default function SidebarList({queues, openOver, selectChat, topics, selectedToShow, setselectedToShow, setMessages,selectedChat}) {
+export default function SidebarList({queues, openOver, selectChat, topics, selectedToShow, setselectedToShow, setMessages,selectedChat, user}) {
   
   return (
     <div className="conatct-list">
@@ -19,14 +19,14 @@ export default function SidebarList({queues, openOver, selectChat, topics, selec
     <hr/>
     <div className="scroll-area">
       {(selectedToShow==="colas"&& queues!==null)? queues.map((queue)=>(
-        <div key={queue} className="queue-item" onClick={()=>{
+        <div key={queue.topicId} className="queue-item" onClick={()=>{
           if(!(queue===selectedChat.id && selectedChat.type==="c")) setMessages([]);
           selectChat({
             type: "c",
-            id: queue
+            id: queue.topicId
           })
         }}>
-          <p className="queue-name">{queue}</p>
+          <p className="queue-name">{queue.topicId}</p>
         </div>
       )
       ):topics.map((topic)=>(

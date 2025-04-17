@@ -1,7 +1,7 @@
 export const loginFields = [
     {
-        name: "email",
-        label: "Email",
+        name: "name",
+        label: "Nombre de usuario",
         type: "text",
         required: true
     },
@@ -16,25 +16,13 @@ export const loginFields = [
 export const registerFields = [
     {
         name: "name",
-        label: "Nombre",
-        type: "text",
-        required: true
-    },
-    {
-        name: "email",
-        label: "Email",
+        label: "Nombre de usuario",
         type: "text",
         required: true
     },
     {
         name: "password",
         label: "Contraseña",
-        type: "password",
-        required: true
-    },
-    {
-        name: "password_confirmation",
-        label: "Confirma contraseña",
         type: "password",
         required: true
     }

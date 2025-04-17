@@ -1,11 +1,12 @@
 import config from "../config/index"
 
-const create= async (queueId)=>{
-    const {data} = await config.API.post("/queue",{
-        queue_id: queueId
-    }).catch(err=>{
+const create = async (token, queueId) => {
+    const {data} = await config.API.post("/queue",
+        { queue_id: queueId },
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
             }
         }
@@ -13,11 +14,12 @@ const create= async (queueId)=>{
     return data;
 }
 
-const getQueues = async ()=>{
-    const {data} = await config.API.get("/queue")
-    .catch(err=>{
+const getQueues = async (token) => {
+    const {data} = await config.API.get("/queue",
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
             }
         }
@@ -25,11 +27,12 @@ const getQueues = async ()=>{
     return data;
 }
 
-const getMessages = async (queueId)=>{
-    const {data} = await config.API(`/queue/${queueId}`)
-    .catch(err=>{
+const getMessages = async (token, queueId) => {
+    const {data} = await config.API.get(`/queue/${queueId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
             }
         }
@@ -37,11 +40,13 @@ const getMessages = async (queueId)=>{
     return data;
 }
 
-const sendMessage = async (quueId, message, user)=>{
-    const {data} =  await config.API.put(`/queue/${quueId}`, { content: message, sender: user })
-    .catch(err=>{
+const sendMessage = async (token, queueId, message) => {
+    const {data} = await config.API.put(`/queue/${queueId}`,
+        { content: message },
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
         return { data: {
-            success:false,
+            success: false,
             message: err.message
             }
         }
@@ -49,7 +54,7 @@ const sendMessage = async (quueId, message, user)=>{
     return data;
 }
 
-const methots ={
+const methots = {
     create,
     getMessages,
     sendMessage,

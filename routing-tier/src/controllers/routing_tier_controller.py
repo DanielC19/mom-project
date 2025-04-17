@@ -73,10 +73,10 @@ class RoutingTier:
             print(f"Failed to create topic via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
-    def push_message_topic(self, topic_name, data):
+    def push_message_topic(self, topic_name, data, user):
         """Push a message to a topic using gRPC."""
         try:
-            response = self.grpc_client.publish_message(topic_name, data["content"], data["sender"])
+            response = self.grpc_client.publish_message(topic_name, data["content"], user)
             return {"success": response.success, "message": response.message}
         except Exception as e:
             print(f"Failed to push message to topic via gRPC: {e}")
@@ -149,11 +149,11 @@ class RoutingTier:
                 self.handle_failover(queue_name)
             time.sleep(5)
 
-    def push_message_queue(self, queue_id, data):
+    def push_message_queue(self, queue_id, data, user):
 
         """Push a message to the queue using gRPC."""
         try:
-            response = self.grpc_client.push_message(queue_id, data["content"], data["sender"])
+            response = self.grpc_client.push_message(queue_id, data["content"], user)
             print(f"Message pushed via gRPC: {response.message}")
             return {"success": response.success, "message": response.message}
         except Exception as e:
@@ -171,25 +171,6 @@ class RoutingTier:
                 return {"success": False, "message": "No message found"}
         except Exception as e:
             print(f"Failed to pull message via gRPC: {e}")
-            return {"success": False, "message": str(e)}
-
-    def route_request(self, queue_name, endpoint, method="GET", data=None):
-        """Route a request to the MOM using gRPC."""
-        try:
-            host = self.get_mom_host()
-            host_ip, host_port = host.split(":")
-            grpc_client = GRPCClient(host_ip, int(host_port))
-
-            if method == "PUT":
-                response = grpc_client.push_message(queue_name, data["content"], data["sender"])
-            elif method == "GET":
-                response = grpc_client.pull_message(queue_name)
-            else:
-                raise ValueError("Unsupported method")
-
-            return {"success": response.success, "message": response.message, "data": response.data}
-        except Exception as e:
-            print(f"Failed to route request via gRPC: {e}")
             return {"success": False, "message": str(e)}
 
     def subscribe_topic(self, topic_id, subscriber_id):

@@ -3,7 +3,7 @@ import queueAPI from "../services/colas";
 import topicAPI from "../services/topics";
 import "../styles/overlay.css";
 
-function PlusOverlay({ setCreatedForMe, isOpen, onClose }) {
+function PlusOverlay({ setCreatedForMe, isOpen, onClose, user }) {
   const [selected, setSelected] = useState("Crear");
   const [select, setSelect] = useState("Colas");
   const [idToCreate, setIdToCreate] = useState("");
@@ -12,12 +12,12 @@ function PlusOverlay({ setCreatedForMe, isOpen, onClose }) {
   const handleSubmit = async (e)=>{
     e.preventDefault();
     if(select==="Colas"){
-      const res =await queueAPI.create(idToCreate);
+      const res =await queueAPI.create(user, idToCreate);
       onClose();
       if(!res.error) setCreatedForMe(prev=>[...prev, idToCreate]);
       alert(res.message);
     }else{
-      const res = await topicAPI.create(idToCreate);
+      const res = await topicAPI.create(user, idToCreate);
       if(!res.error) setCreatedForMe(prev=>[...prev, idToCreate]);
       alert(res.message);
       onClose();

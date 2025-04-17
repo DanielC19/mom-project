@@ -3,13 +3,21 @@ import SidebarList from "../components/SidebarList";
 import { useEffect, useState } from "react";
 import queueAPI from "../services/colas"
 import topicAPI from "../services/topics"
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PlusOverlay from "../components/plusOverlay";
 
 function ChatView(){
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const user = queryParams.get('user');
+
+  // Si no se encuentra el parámetro user, redirige a la raíz
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const [showOverlay, setShowOlverlay] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -29,7 +37,7 @@ function ChatView(){
       try {
         if(selectedItem.id!==null && mode==="r"){
           if(selectedToShow==="topicos" ){
-            let data = await topicAPI.getMessages(selectedItem.id, user)
+            let data = await topicAPI.getMessages(user,selectedItem.id)
             const nuevosMensajes = data.data.map((message) => ({
               text: message.content,
               sender: message.sender,
@@ -39,7 +47,7 @@ function ChatView(){
             setMessages((mensajesPrevios) => [...mensajesPrevios, ...nuevosMensajes]);
 
           }else{
-          let data = await queueAPI.getMessages(selectedItem.id);
+          let data = await queueAPI.getMessages(user, selectedItem.id);
           if (data.success) setMessages([...messages, {text: data.data.content, sender: "other", timestamp: data.data.timestamp}]); 
           }
         }
@@ -50,8 +58,8 @@ function ChatView(){
 
 
     const fetchData = async ()=>{
-      const Qdata = await queueAPI.getQueues();
-      const tData = await topicAPI.getTopics();
+      const Qdata = await queueAPI.getQueues(user);
+      const tData = await topicAPI.getTopics(user);
       
       if(tData.success) setTopics(tData.data);
       if(Qdata.success) setQueues(Qdata.data);
@@ -65,7 +73,7 @@ function ChatView(){
     }, [setQueues, messages,selectedItem, selectedToShow, createdForMe, user, mode]);
 
     const seleccionarChat = async (nChat)=>{
-      if(nChat.type==="t") await topicAPI.suscribe(nChat.id, user)
+      if(nChat.type==="t") await topicAPI.suscribe(user, nChat.id)
       setSelectedItem({
         type: nChat.type,
         id: nChat.id
@@ -78,10 +86,11 @@ function ChatView(){
                 setShowOlverlay(false);
               }
               }
+              user={user}
               setCreatedForMe={setCreatedForMe}
               />
               <header className="App-header">
-                <SidebarList setMessages={setMessages} selected={selectedToShow} selectedToShow={selectedToShow} setselectedToShow={setselectedToShow} topics={topics} queues={queues} openOver={()=>{
+                <SidebarList user={user} setMessages={setMessages} selected={selectedToShow} selectedToShow={selectedToShow} setselectedToShow={setselectedToShow} topics={topics} queues={queues} openOver={()=>{
                   setShowOlverlay(true)
                 }
               } 

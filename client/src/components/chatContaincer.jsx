@@ -28,9 +28,9 @@ function ChatContainer({ selectedChat, selected, messages, setMessages, user, se
 
     try {
       if (selected === "topicos") {
-        await topicAPI.sendMessage(selectedChat.id, message, user);
+        await topicAPI.sendMessage(user, selectedChat.id, message);
       } else {
-        await queueAPI.sendMessage(selectedChat.id, message, user);
+        await queueAPI.sendMessage(user, selectedChat.id, message);
       }
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage("");

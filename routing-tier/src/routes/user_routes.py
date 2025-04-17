@@ -14,7 +14,10 @@ def create_user():
         if not data["password"] or not data["username"]:
             return jsonify({'error': 'Username and password required.'}), 400
         response = user_controller.create_user(data["username"], data["password"])
-        return generate_response(response["success"], response["message"])
+        token = create_access_token(identity=data["username"])
+        if not response["success"]:
+            return generate_response(False, response["message"])
+        return jsonify({"success": response["success"], "message": response["message"], "token": token})
     except Exception as e:
         log_error(f"Error creating user: {str(e)}")
         return generate_response(False, "Failed to create user")

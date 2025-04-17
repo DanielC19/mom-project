@@ -22,6 +22,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config["JWT_SECRET_KEY"] = "your-secret-key"  # nueva configuración para JWT
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False  # elimina la expiración del token
 
     # Inicializar la base de datos con la app
     db.init_app(app)
