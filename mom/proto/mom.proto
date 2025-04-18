@@ -19,6 +19,7 @@ service QueueService {
     rpc ListQueues (Empty) returns (ListQueuesResponse);
     rpc PushMessage (PushMessageRequest) returns (Response);
     rpc PullMessage (PullMessageRequest) returns (MessageResponse);
+    rpc DeleteQueue (DeleteQueueRequest) returns (Response);
 }
 
 // Common messages
@@ -114,5 +115,10 @@ message Message {
 
 message DeleteTopicRequest {
     string topic_id = 1;
+    string user = 2;
+}
+
+message DeleteQueueRequest {
+    string queue_id = 1;
     string user = 2;
 }
