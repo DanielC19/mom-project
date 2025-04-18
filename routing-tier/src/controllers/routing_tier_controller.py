@@ -200,6 +200,9 @@ class RoutingTier:
             leader_client, follower_client = self.queue_grpc_client(queue_id)
             leader_response = leader_client.pull_message(queue_id)
 
+            if not leader_response.success and leader_response.message == "Queue is empty":
+                        return {"success": False, "message": "Queue is empty"}
+
             if follower_client:
                 try:
                     follower_client.pull_message(queue_id)
@@ -215,10 +218,11 @@ class RoutingTier:
         """Push a message to a topic using gRPC."""
         try:
             leader_client, follower_client = self.queue_grpc_client(topic_name)
-            leader_response = leader_client.push_message(topic_name, data["content"], user)
+            leader_response = leader_client.publish_message(topic_name, data["content"], user)
             if follower_client:
                 try:
-                    follower_client.push_message(topic_name, data["content"], user)
+                    print(follower_client)
+                    follower_client.publish_message(topic_name, data["content"], user)
                 except Exception as e:
                     print(f"Failed to push message to follower for {topic_name}: {str(e)}")
 
@@ -231,10 +235,10 @@ class RoutingTier:
         """Pull a message from a topic using gRPC."""
         try:
             leader_client, follower_client = self.queue_grpc_client(topic_name)
-            leader_response = leader_client.pull_message(topic_name, user_id)
+            leader_response = leader_client.pull_messages(topic_name, user_id)
             if follower_client:
                 try:
-                    follower_client.pull_message(topic_name, user_id)
+                    follower_client.pull_messages(topic_name, user_id)
                 except Exception as e:
                     print(f"Failed to pull message from follower for {topic_name}: {str(e)}")
 
