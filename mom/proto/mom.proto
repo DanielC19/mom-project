@@ -56,7 +56,7 @@ message Topic {
 }
 
 message Queue {
-    string queue_id = 1;
+    string topic_id = 1;
     string autor = 2;
 }
 
@@ -70,7 +70,9 @@ message PullMessagesRequest {
 }
 
 message MessagesResponse {
-    repeated Message messages = 1;
+    bool success = 1;
+    string message = 2;
+    repeated Message data = 3;
 }
 
 message CreateQueueRequest {
@@ -80,6 +82,10 @@ message CreateQueueRequest {
 
 message ListQueuesResponse {
     repeated Queue queues = 1;
+}
+
+message Group {
+    repeated string queues = 1;
 }
 
 message PushMessageRequest {
