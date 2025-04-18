@@ -54,6 +54,6 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
 
     def DeleteTopic(self, request, context):
         #TODO: review that only the creator be capablke to delete
-        success = self.service.delete_topic(request.topic_id)
-        message = "Topic deleted" if success else "Topic not found"
+        success = self.service.delete_topic(request.topic_id, request.user)
+        message = "Topic deleted" if success else "Topic not found or unauthorization failed"
         return mom_pb2.Response(success=success, message=message)

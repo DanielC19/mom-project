@@ -36,8 +36,13 @@ class TopicsService:
             return self.topics[topic_id].pull_messages(subscriber_id)
         return []
 
-    def delete_topic(self, topic_id):
+    def delete_topic(self, topic_id, user):
         if topic_id in self.topics:
+            topic = self.topics[topic_id]
+            if topic.autor != user:  # Validar que el usuario sea el creador
+                print(f"User {user} is not authorized to delete topic {topic_id}")
+                return False
             del self.topics[topic_id]
             return True
+        print(f"Topic {topic_id} not found")
         return False

@@ -54,3 +54,7 @@ class GRPCClient:
     def list_topics(self):
         request = mom_pb2.Empty()
         return self.topic_stub.ListTopics(request)
+
+    def delete_queue(self, queue_id, user):
+        request = mom_pb2.DeleteQueueRequest(queue_id=queue_id, user=user)
+        return self.queue_stub.DeleteQueue(request)
