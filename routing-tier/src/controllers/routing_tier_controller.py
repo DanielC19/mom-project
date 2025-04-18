@@ -285,7 +285,39 @@ class RoutingTier:
                     follower_client.delete_topic(topic_id, user)
                 except Exception as e:
                     print(f"Failed to delete topic on follower {topic_id}: {str(e)}")
+
+            if leader_response.success:
+                try:
+                    self.zk.delete(f"{QUEUE_PATH}/{topic_id}")
+                    del self.queues[topic_id]
+                    print(f"Deleted topic {topic_id} from Zookeeper.")
+                except Exception as e:
+                    print(f"Failed to delete topic {topic_id} from Zookeeper: {str(e)}")
+
             return MessageToDict(leader_response)
         except Exception as e:
             print(f"Failed to delete topic via gRPC: {str(e)}")
+            return {"success": False, "message": str(e)}
+
+    def delete_queue(self, queue_id, user):
+        try:
+            leader_client, follower_client = self.queue_grpc_client(queue_id)
+            leader_response = leader_client.delete_queue(queue_id, user)
+            if follower_client:
+                try:
+                    follower_client.delete_queue(queue_id, user)
+                except Exception as e:
+                    print(f"Failed to delete queue on follower {queue_id}: {str(e)}")
+
+            if leader_response.success:
+                try:
+                    self.zk.delete(f"{QUEUE_PATH}/{queue_id}")
+                    del self.queues[queue_id]
+                    print(f"Deleted queue {queue_id} from Zookeeper.")
+                except Exception as e:
+                    print(f"Failed to delete queue {queue_id} from Zookeeper: {str(e)}")
+
+            return MessageToDict(leader_response)
+        except Exception as e:
+            print(f"Failed to delete queue via gRPC: {str(e)}")
             return {"success": False, "message": str(e)}

@@ -25,3 +25,14 @@ class QueueService:
             return message
         except Exception as e:
             return False
+
+    def delete_queue(self, queue_id, user):
+        if queue_id in self.queues:
+            queue = self.queues[queue_id]
+            if queue.autor != user:  # Validar que el usuario sea el creador
+                print(f"User {user} is not authorized to delete queue {queue_id}")
+                return False
+            del self.queues[queue_id]
+            return True
+        print(f"Queue {queue_id} not found")
+        return False

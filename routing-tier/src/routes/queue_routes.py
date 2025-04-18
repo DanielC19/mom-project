@@ -48,3 +48,15 @@ def pull_message(queue_id):
     except Exception as e:
         log_error(f"Error pulling message from queue {queue_id}: {str(e)}")
         return generate_response(False, "Failed to pull message")
+
+@queue_bp.route('/queue/<queue_id>', methods=['DELETE'])
+@jwt_required()
+def delete_queue(queue_id):
+    try:
+        current_user = get_jwt_identity()
+        response = routing_tier.delete_queue(queue_id, current_user)
+        print(response)
+        return generate_response(**response)
+    except Exception as e:
+        log_error(f"Error deleting queue {queue_id}: {str(e)}")
+        return generate_response(False, "Failed to delete queue")

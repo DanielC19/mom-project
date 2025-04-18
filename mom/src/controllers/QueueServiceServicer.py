@@ -47,3 +47,8 @@ class QueueServiceServicer(mom_pb2_grpc.QueueServiceServicer):
         context.set_code(grpc.StatusCode.NOT_FOUND)
         context.set_details("Queue not found")
         return mom_pb2.MessageResponse(success=False, message="Queue not found")
+
+    def DeleteQueue(self, request, context):
+        success = self.service.delete_queue(request.queue_id, request.user)
+        message = "Queue deleted" if success else "Queue not found or uathorization failed"
+        return mom_pb2.Response(success=success, message=message)
