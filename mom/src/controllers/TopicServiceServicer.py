@@ -40,13 +40,15 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
 
     def PullMessages(self, request, context):
         messages = self.service.pull_messages(request.topic_id, request.subscriber_id)
-        return mom_pb2.MessagesResponse(messages=[
-            mom_pb2.Message(
-                message_id=msg.message_id,
-                parent=msg.parent,
-                content=msg.content,
-                sender=msg.sender,
-                timestamp=msg.timestamp
+        return mom_pb2.MessagesResponse(success=True,
+                message="Message retrieved",
+                data=[
+                    mom_pb2.Message(
+                        message_id=msg.message_id,
+                        parent=msg.parent,
+                        content=msg.content,
+                        sender=msg.sender,
+                        timestamp=msg.timestamp
             ) for msg in messages
         ])
 
