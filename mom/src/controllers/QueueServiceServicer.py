@@ -33,13 +33,17 @@ class QueueServiceServicer(mom_pb2_grpc.QueueServiceServicer):
     def PullMessage(self, request, context):
         message = self.service.pull_message(request.queue_id)
         if message:
-            return mom_pb2.MessageResponse(message=mom_pb2.Message(
-                message_id=message.message_id,
-                parent=message.parent,
-                content=message.content,
-                sender=message.sender,
-                timestamp=message.timestamp
-            ))
+            return mom_pb2.MessageResponse(
+                success=True,
+                message="Message retrieved",
+                data=mom_pb2.Message(
+                    message_id=message.message_id,
+                    parent=message.parent,
+                    content=message.content,
+                    sender=message.sender,
+                    timestamp=message.timestamp
+                )
+            )
         context.set_code(grpc.StatusCode.NOT_FOUND)
         context.set_details("Queue not found")
-        return mom_pb2.MessageResponse()
+        return mom_pb2.MessageResponse(success=False, message="Queue not found")
