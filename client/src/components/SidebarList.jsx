@@ -26,7 +26,7 @@ export default function SidebarList({queues, openOver, selectChat, topics, selec
             id: queue.topicId
           })
         }}>
-          <p className="queue-name">{queue.topicId}</p>
+          <p className="queue-name">{queue}</p>
         </div>
       )
       ):topics.map((topic)=>(
@@ -37,7 +37,7 @@ export default function SidebarList({queues, openOver, selectChat, topics, selec
             id: topic.topicId
           })
                   }}>
-          <p className="queue-name">{topic.topicId}</p>
+          <p className="queue-name">{topic}</p>
         </div>
       )
       )}

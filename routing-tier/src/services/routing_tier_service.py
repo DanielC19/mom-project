@@ -14,3 +14,6 @@ routing_tier = RoutingTier()
 
 # Delete current hosts
 #routing_tier.zk.delete("/hosts_service", recursive=True)
+
+# Delete current topics
+#routing_tier.zk.delete("/topic_service", recursive=True) 
