@@ -1,5 +1,6 @@
 from src.models.message import Message
 from src.models.queue import Queue
+from src.utils.replication_pb2 import Message as ProtoMessage
 
 class QueueService:
     def __init__(self):
@@ -36,3 +37,15 @@ class QueueService:
             return True
         print(f"Queue {queue_id} not found")
         return False
+
+    def get_queue_messages(self, queue_id):
+        queue = self.queues.get(queue_id)
+        if queue:
+            return [ProtoMessage(
+                        message_id=msg.message_id,
+                        parent=msg.parent,
+                        content=msg.content,
+                        sender=msg.sender,
+                        timestamp=msg.timestamp
+                    ) for msg in queue.messages]
+        return []

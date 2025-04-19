@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import grpc
 from concurrent import futures
-from src.utils import mom_pb2, mom_pb2_grpc
+from src.utils import mom_pb2, mom_pb2_grpc, replication_pb2, replication_pb2_grpc
 from kazoo.client import KazooClient
 import socket
 import random
@@ -12,6 +12,7 @@ from watchdog.events import FileSystemEventHandler
 import time
 from src.controllers.TopicServiceServicer import TopicServiceServicer
 from src.controllers.QueueServiceServicer import QueueServiceServicer
+from src.controllers.ReplicationServiceServicer import ReplicationServiceServicer
 
 ZOOKEEPER_HOSTS = "127.0.0.1:2181" 
 HOSTS_PATH = "/hosts_service"
@@ -26,6 +27,7 @@ def serve(port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     mom_pb2_grpc.add_TopicServiceServicer_to_server(TopicServiceServicer(), server)
     mom_pb2_grpc.add_QueueServiceServicer_to_server(QueueServiceServicer(), server)
+    replication_pb2_grpc.add_ReplicationServiceServicer_to_server(ReplicationServiceServicer(), server)
     server.add_insecure_port("[::]:50051")
     server.add_insecure_port(f"[::]:{port}")
     print(f"gRPC server running on port 50051 and {port}")

@@ -1,5 +1,6 @@
 from src.models.topic import Topic
 from src.models.message import Message
+from src.utils.replication_pb2 import Message as ProtoMessage  # para construir mensajes
 
 class TopicsService:
     def __init__(self):
@@ -46,3 +47,17 @@ class TopicsService:
             return True
         print(f"Topic {topic_id} not found")
         return False
+
+    def get_topic_messages(self, topic_id):
+        # Se simula la obtención de mensajes; se asume que cada topic almacena una lista de mensajes (objetos o dicts)
+        topic = self.topics.get(topic_id)
+        if topic and "messages" in topic:
+            # Convertir cada mensaje a ProtoMessage; se espera que cada mensaje tenga id, parent, content, sender y timestamp
+            return [ProtoMessage(
+                        message_id=msg.get("message_id", ""),
+                        parent=msg.get("parent", ""),
+                        content=msg.get("content", ""),
+                        sender=msg.get("sender", ""),
+                        timestamp=msg.get("timestamp", "")
+                    ) for msg in topic["messages"]]
+        return []

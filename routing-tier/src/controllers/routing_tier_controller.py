@@ -4,6 +4,9 @@ import random
 import time
 import requests
 from google.protobuf.json_format import MessageToDict
+import grpc
+from src.grpc_client.replication_pb2 import FailOverRequest
+from src.grpc_client.replication_pb2_grpc import ReplicationServiceStub
 
 ZOOKEEPER_HOSTS = "127.0.0.1:2181"
 HOSTS_PATH = "/hosts_service"
@@ -164,6 +167,14 @@ class RoutingTier:
             print(f"Failed to create topic via gRPC: {str(e)}")
             return {"success": False, "message": str(e)}
 
+    def perform_failover(self, is_topic, id, target):
+        """Realiza la llamada RPC FailOver para notificar a la MOM del nuevo líder."""
+        with grpc.insecure_channel(f"{target}:50051") as channel:
+            stub = ReplicationServiceStub(channel)
+            request = FailOverRequest(isTopic=is_topic, target=target, id=id)
+            response = stub.FailOver(request)
+        return response
+
     def handle_failover(self, queue_name=None, topic_name=None):
         # Handle failover for queues
         if queue_name is not None:
@@ -181,7 +192,9 @@ class RoutingTier:
                         new_follower = random.choice(new_follower_candidates)
                         self.queues[queue_name]["follower"] = new_follower
                         self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{follower}|{new_follower}".encode())
-                        print(f"New leader for queue {queue_name} is {follower}. New follower is {new_follower}.")
+                        # Notificar a la MOM del nuevo líder para la cola
+                        response = self.perform_failover(is_topic=False, id=queue_name, target=follower)
+                        print(f"New leader for queue {queue_name} is {follower}. Failover response: {response.message}")
                     else:
                         self.queues[queue_name]["follower"] = None
                 elif follower not in self.hosts:
@@ -211,7 +224,9 @@ class RoutingTier:
                         new_follower = random.choice(new_follower_candidates)
                         self.topics[topic_name]["follower"] = new_follower
                         self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{follower}|{new_follower}".encode())
-                        print(f"New leader for topic {topic_name} is {follower}. New follower is {new_follower}.")
+                        # Notificar a la MOM del nuevo líder para el tópico
+                        response = self.perform_failover(is_topic=True, id=topic_name, target=follower)
+                        print(f"New leader for topic {topic_name} is {follower}. Failover response: {response.message}")
                     else:
                         self.topics[topic_name]["follower"] = None
                 elif follower not in self.hosts:
