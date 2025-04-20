@@ -1,5 +1,6 @@
 .venv/
 mom copy
 mom copy 2
+mom-2
 *.pyc
 __pycache__/
