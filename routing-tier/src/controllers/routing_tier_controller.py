@@ -81,7 +81,7 @@ class RoutingTier:
         leader_ip, leader_port = leader.split("_")
         leader_client = GRPCClient(host=leader_ip, port=int(leader_port))
 
-        if follower:
+        if follower and follower != "None":
             follower_ip, follower_port = follower.split("_")
             follower_client = GRPCClient(host=follower_ip, port=int(follower_port))
             return leader_client, follower_client
@@ -96,7 +96,7 @@ class RoutingTier:
         leader_ip, leader_port = leader.split("_")
         leader_client = GRPCClient(host=leader_ip, port=int(leader_port))
 
-        if follower:
+        if follower and follower != "None":
             follower_ip, follower_port = follower.split("_")
             follower_client = GRPCClient(host=follower_ip, port=int(follower_port))
             return leader_client, follower_client
