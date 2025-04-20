@@ -17,7 +17,9 @@ def create_user():
         token = create_access_token(identity=data["username"])
         if not response["success"]:
             return generate_response(False, response["message"])
-        return jsonify({"success": response["success"], "message": response["message"], "token": token})
+        return jsonify({"success": response["success"], "message": response["message"], "data": {
+            "token": token, "username": data["username"]
+        }})
     except Exception as e:
         log_error(f"Error creating user: {str(e)}")
         return generate_response(False, "Failed to create user")
@@ -31,7 +33,9 @@ def login_user():
         response = user_controller.login_user(data["username"], data["password"])
         if response["success"]:
             token = create_access_token(identity=data["username"])
-            return jsonify({"success": True, "message": response["message"], "token": token})
+            return jsonify({"success": True, "message": response["message"], "data": {
+            "token": token, "username": data["username"]
+        }})
         else:
             return generate_response(False, response["message"])
     except Exception as e:

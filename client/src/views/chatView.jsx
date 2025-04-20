@@ -11,6 +11,7 @@ function ChatView(){
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const user = queryParams.get('user');
+  const username = queryParams.get('name');
 
   // Si no se encuentra el parámetro user, redirige a la raíz
   useEffect(() => {
@@ -90,7 +91,7 @@ function ChatView(){
               setCreatedForMe={setCreatedForMe}
               />
               <header className="App-header">
-                <SidebarList user={user} setMessages={setMessages} selected={selectedToShow} selectedToShow={selectedToShow} setselectedToShow={setselectedToShow} topics={topics} queues={queues} openOver={()=>{
+                <SidebarList user={user} username={username} setMessages={setMessages} selected={selectedToShow} selectedToShow={selectedToShow} setselectedToShow={setselectedToShow} topics={topics} queues={queues} openOver={()=>{
                   setShowOlverlay(true)
                 }
               } 

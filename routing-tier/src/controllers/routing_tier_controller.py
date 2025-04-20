@@ -31,16 +31,15 @@ class RoutingTier:
         existing_queues = self.zk.get_children(QUEUE_PATH)
         for queue_name in existing_queues:
             data, _ = self.zk.get(f"{QUEUE_PATH}/{queue_name}")
-            leader, follower = data.decode().split("|")
-            self.queues[queue_name] = {"leader": leader, "follower": follower}
+            leader, follower, autor = data.decode().split("|")
+            self.queues[queue_name] = {"leader": leader, "follower": follower, "autor": autor}
             print(f"Loaded existing queues: {self.queues}")
-
         
         existing_topics = self.zk.get_children(TOPIC_PATH)
         for topic_name in existing_topics:
             data, _ = self.zk.get(f"{TOPIC_PATH}/{topic_name}")
-            leader, follower = data.decode().split("|")
-            self.queues[topic_name] = {"leader": leader, "follower": follower}
+            leader, follower, autor = data.decode().split("|")
+            self.queues[topic_name] = {"leader": leader, "follower": follower, "autor": autor}
             print(f"Loaded existing queues: {self.topics}")
 
 
@@ -70,7 +69,7 @@ class RoutingTier:
         leader_ip, leader_port = leader.split("_")
         leader_client = GRPCClient(host=leader_ip, port=int(leader_port))
 
-        if follower:
+        if follower and follower != "None":
             follower_ip, follower_port = follower.split("_")
             follower_client = GRPCClient(host=follower_ip, port=int(follower_port))
             return leader_client, follower_client
@@ -85,7 +84,7 @@ class RoutingTier:
         leader_ip, leader_port = leader.split("_")
         leader_client = GRPCClient(host=leader_ip, port=int(leader_port))
 
-        if follower:
+        if follower and follower != "None":
             follower_ip, follower_port = follower.split("_")
             follower_client = GRPCClient(host=follower_ip, port=int(follower_port))
             return leader_client, follower_client
@@ -94,11 +93,22 @@ class RoutingTier:
 
     def get_queues(self):
         """Get the list of queues."""
-        return list(self.queues.keys())
+        queue_list = list(self.queues.keys())
+        response= []
+     
+        for queue in queue_list:
+            response.append({"queue_id": queue, "autor": self.queues[queue]["autor"]})
+        return response
 
     def get_topics(self):
         """Get the list of queues."""
-        return list(self.topics.keys())
+        topic_list = list(self.topics.keys())
+        response= []
+     
+        for topic in topic_list:
+            response.append({"topic_id": topic, "autor": self.topics[topic]["autor"]})
+    
+        return response
 
     def create_queue(self, queue_name, user):
         """Create a new queue and assign a leader and follower."""
@@ -112,10 +122,11 @@ class RoutingTier:
         else:
             follower = None
 
-        self.queues[queue_name] = {"leader": leader, "follower": follower}
+        self.queues[queue_name] = {"leader": leader, "follower": follower, "autor": user}
 
         try:
-            self.zk.create(f"{QUEUE_PATH}/{queue_name}", f"{leader}|{follower}".encode())
+            autor= user
+            self.zk.create(f"{QUEUE_PATH}/{queue_name}", f"{leader}|{follower}|{autor}".encode())
             print(f"Created queue {queue_name} with leader {leader} and follower {follower}.")
         except Exception as e:
             print(f"Failed to create Zookeeper node for queue {queue_name}: {str(e)}")
@@ -148,8 +159,9 @@ class RoutingTier:
         else:
             follower = None
 
-        self.topics[topic_name] = {"leader": leader, "follower": follower}
-        self.zk.create(f"{TOPIC_PATH}/{topic_name}", f"{leader}|{follower}".encode())
+        self.topics[topic_name] = {"leader": leader, "follower": follower, "autor": user}
+        autor= user
+        self.zk.create(f"{TOPIC_PATH}/{topic_name}", f"{leader}|{follower}|{autor}".encode())
         print(f"Created topic {topic_name} with leader {leader} and follower {follower}.")
 
         try:
@@ -367,7 +379,7 @@ class RoutingTier:
             if leader_response.success:
                 try:
                     self.zk.delete(f"{TOPIC_PATH}/{topic_id}")
-                    del self.queues[topic_id]
+                    del self.topics[topic_id]
                     print(f"Deleted topic {topic_id} from Zookeeper.")
                 except Exception as e:
                     print(f"Failed to delete topic {topic_id} from Zookeeper: {str(e)}")
@@ -379,6 +391,7 @@ class RoutingTier:
 
     def delete_queue(self, queue_id, user):
         try:
+            print(f"Deleting queue {queue_id} by user {user}.")
             leader_client, follower_client = self.queue_grpc_client(queue_id)
             leader_response = leader_client.delete_queue(queue_id, user)
             if follower_client:

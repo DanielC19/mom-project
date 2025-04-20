@@ -23,7 +23,7 @@ function Login({ setUser }) {
     userAPI.logIn(loginState.name, loginState.password)
       .then(res => {
         if (res.success) {
-          navigate(`/chat?user=${res.token}`);
+          navigate(`/chat?user=${res.data.token}&name=${res.data.username}`);
         } else {
           setErrorState(res.message);
         }
