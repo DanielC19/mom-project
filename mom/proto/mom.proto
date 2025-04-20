@@ -151,13 +151,13 @@ message ReplicationRequest{
 message TopicReplication {
     string topic_id = 1;
     string autor = 2;
-    repeated Message messages = 3;
+    repeated MessageReplication messages = 3;
 }
 
 message QueueReplication {
     string queue_id = 1;
     string autor = 2;
-    repeated Message messages = 3;
+    repeated MessageReplication messages = 3;
 }
 
 message MessageReplication {
