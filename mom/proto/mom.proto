@@ -22,6 +22,14 @@ service QueueService {
     rpc DeleteQueue (DeleteQueueRequest) returns (Response);
 }
 
+service ReplicationService{
+    rpc GetTopic (ReplicationRequest) returns (GetTopicResponse);
+    rpc GetQueue (ReplicationRequest) returns (GetQueueResponse);
+    rpc ImportQueue (ImportQueueRequest) returns (ImportReplicationResponse);
+    rpc ImportTopic (ImportTopicRequest) returns (ImportReplicationResponse);
+
+}
+
 // Common messages
 message Response {
     bool success = 1;
@@ -121,4 +129,55 @@ message DeleteTopicRequest {
 message DeleteQueueRequest {
     string queue_id = 1;
     string user = 2;
+}
+
+
+message GetTopicResponse{
+    bool success = 1;
+    string message = 2;
+    TopicReplication data = 3;
+}
+
+message GetQueueResponse{
+    bool success = 1;
+    string message = 2;
+    QueueReplication data = 3;
+}
+
+message ReplicationRequest{
+    string target = 1;
+}
+
+message TopicReplication {
+    string topic_id = 1;
+    string autor = 2;
+    repeated Message messages = 3;
+}
+
+message QueueReplication {
+    string queue_id = 1;
+    string autor = 2;
+    repeated Message messages = 3;
+}
+
+message MessageReplication {
+    string message_id = 1;
+    string parent = 2;
+    string content = 3;
+    string sender = 4;
+    string timestamp = 5;
+    repeated string sent = 6;
+}
+
+message ImportQueueRequest {
+    QueueReplication queue = 1;
+}
+
+message ImportTopicRequest {
+    TopicReplication topic = 1;
+}
+
+message ImportReplicationResponse {
+    bool success = 1;
+    string message = 2;
 }
