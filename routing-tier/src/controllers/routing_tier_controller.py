@@ -23,8 +23,22 @@ class RoutingTier:
         self.zk.ensure_path(QUEUE_PATH)
         self.zk.ensure_path(TOPIC_PATH)
 
+        self.update_hosts(self.zk.get_children(HOSTS_PATH))
+
+        queues = []
+        topics = []
+        for host in self.hosts:
+            host_ip, host_port = host.split("_")
+            host_client = GRPCClient(host=host_ip, port=int(host_port))
+            queues.append(host_client.list_queues())
+            topics.append(host_client.list_topics())
+        print(f"Hosts Queues: {queues}")
+
         existing_queues = self.zk.get_children(QUEUE_PATH)
         for queue_name in existing_queues:
+            if queue_name not in self.queues:
+                self.zk.delete(f"{QUEUE_PATH}/{queue_name}")
+                continue
             data, _ = self.zk.get(f"{QUEUE_PATH}/{queue_name}")
             leader, follower = data.decode().split("|")
             self.queues[queue_name] = {"leader": leader, "follower": follower}
@@ -32,6 +46,9 @@ class RoutingTier:
 
         existing_topics = self.zk.get_children(TOPIC_PATH)
         for topic_name in existing_topics:
+            if topic_name not in self.topics:
+                self.zk.delete(f"{TOPIC_PATH}/{topic_name}")
+                continue
             data, _ = self.zk.get(f"{TOPIC_PATH}/{topic_name}")
             leader, follower = data.decode().split("|")
             self.queues[topic_name] = {"leader": leader, "follower": follower}
