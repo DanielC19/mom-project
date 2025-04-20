@@ -34,6 +34,7 @@ def create_app():
 def start_routing_tier():
     """Run the RoutingTier's listen method in a separate thread."""
     threading.Thread(target=routing_tier.monitor_queues, daemon=True).start()
+    threading.Thread(target=routing_tier.monitor_topics, daemon=True).start()
 
 if __name__ == "__main__":
     start_routing_tier()
