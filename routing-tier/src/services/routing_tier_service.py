@@ -10,10 +10,10 @@ from src.controllers.routing_tier_controller import RoutingTier
 routing_tier = RoutingTier()
 
 # Delete current queues
-#routing_tier.zk.delete("/queue_service", recursive=True)
+# routing_tier.zk.delete("/queue_service", recursive=True)
 
 # Delete current hosts
-#routing_tier.zk.delete("/hosts_service", recursive=True)
+# routing_tier.zk.delete("/hosts_service", recursive=True)
 
 # Delete current topics
-#routing_tier.zk.delete("/topic_service", recursive=True) 
+# routing_tier.zk.delete("/topic_service", recursive=True)

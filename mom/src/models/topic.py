@@ -7,7 +7,7 @@ topic_schema = {
     },
     "required": ["topic_id"],
 }
- 
+
 class Topic:
     def __init__(self, topic_id, autor):
         self.topic_id = topic_id

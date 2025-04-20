@@ -2,24 +2,19 @@ from kazoo.client import KazooClient
 from src.services.grpc_client import GRPCClient
 import random
 import time
-import requests
 from google.protobuf.json_format import MessageToDict
-import grpc
-from src.grpc_client.replication_pb2 import FailOverRequest
-from src.grpc_client.replication_pb2_grpc import ReplicationServiceStub
 
 ZOOKEEPER_HOSTS = "127.0.0.1:2181"
 HOSTS_PATH = "/hosts_service"
 QUEUE_PATH = "/queue_service"
 TOPIC_PATH = "/topic_service"
 
-
 class RoutingTier:
     def __init__(self):
         self.grpc_client = GRPCClient()  # Initialize gRPC client ONLY FOR BROADCAST
         self.zk = KazooClient(hosts=ZOOKEEPER_HOSTS)
         self.zk.start()
-        self.queues = {}  # Store queue metadata (leader, follower)
+        self.queues = {}
         self.topics = {}
         self.hosts = []  # List of available hosts
 
@@ -35,13 +30,12 @@ class RoutingTier:
             self.queues[queue_name] = {"leader": leader, "follower": follower}
             print(f"Loaded existing queues: {self.queues}")
 
-        
         existing_topics = self.zk.get_children(TOPIC_PATH)
         for topic_name in existing_topics:
             data, _ = self.zk.get(f"{TOPIC_PATH}/{topic_name}")
             leader, follower = data.decode().split("|")
             self.queues[topic_name] = {"leader": leader, "follower": follower}
-            print(f"Loaded existing queues: {self.topics}")
+            print(f"Loaded existing topics: {self.topics}")
 
 
         # Watch for changes in hosts
