@@ -70,6 +70,16 @@ class TopicServiceStub(object):
                 request_serializer=mom__pb2.DeleteTopicRequest.SerializeToString,
                 response_deserializer=mom__pb2.Response.FromString,
                 _registered_method=True)
+        self.GetTopic = channel.unary_unary(
+                '/mom.TopicService/GetTopic',
+                request_serializer=mom__pb2.ReplicationRequest.SerializeToString,
+                response_deserializer=mom__pb2.GetTopicResponse.FromString,
+                _registered_method=True)
+        self.ImportTopic = channel.unary_unary(
+                '/mom.TopicService/ImportTopic',
+                request_serializer=mom__pb2.ImportTopicRequest.SerializeToString,
+                response_deserializer=mom__pb2.ImportReplicationResponse.FromString,
+                _registered_method=True)
 
 
 class TopicServiceServicer(object):
@@ -118,6 +128,18 @@ class TopicServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTopic(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportTopic(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TopicServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -155,6 +177,16 @@ def add_TopicServiceServicer_to_server(servicer, server):
                     servicer.DeleteTopic,
                     request_deserializer=mom__pb2.DeleteTopicRequest.FromString,
                     response_serializer=mom__pb2.Response.SerializeToString,
+            ),
+            'GetTopic': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTopic,
+                    request_deserializer=mom__pb2.ReplicationRequest.FromString,
+                    response_serializer=mom__pb2.GetTopicResponse.SerializeToString,
+            ),
+            'ImportTopic': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportTopic,
+                    request_deserializer=mom__pb2.ImportTopicRequest.FromString,
+                    response_serializer=mom__pb2.ImportReplicationResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -357,6 +389,60 @@ class TopicService(object):
             metadata,
             _registered_method=True)
 
+    @staticmethod
+    def GetTopic(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/mom.TopicService/GetTopic',
+            mom__pb2.ReplicationRequest.SerializeToString,
+            mom__pb2.GetTopicResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ImportTopic(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/mom.TopicService/ImportTopic',
+            mom__pb2.ImportTopicRequest.SerializeToString,
+            mom__pb2.ImportReplicationResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
 
 class QueueServiceStub(object):
     """Service for Queues
@@ -392,6 +478,16 @@ class QueueServiceStub(object):
                 '/mom.QueueService/DeleteQueue',
                 request_serializer=mom__pb2.DeleteQueueRequest.SerializeToString,
                 response_deserializer=mom__pb2.Response.FromString,
+                _registered_method=True)
+        self.GetQueue = channel.unary_unary(
+                '/mom.QueueService/GetQueue',
+                request_serializer=mom__pb2.ReplicationRequest.SerializeToString,
+                response_deserializer=mom__pb2.GetQueueResponse.FromString,
+                _registered_method=True)
+        self.ImportQueue = channel.unary_unary(
+                '/mom.QueueService/ImportQueue',
+                request_serializer=mom__pb2.ImportQueueRequest.SerializeToString,
+                response_deserializer=mom__pb2.ImportReplicationResponse.FromString,
                 _registered_method=True)
 
 
@@ -429,6 +525,18 @@ class QueueServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetQueue(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ImportQueue(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_QueueServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -456,6 +564,16 @@ def add_QueueServiceServicer_to_server(servicer, server):
                     servicer.DeleteQueue,
                     request_deserializer=mom__pb2.DeleteQueueRequest.FromString,
                     response_serializer=mom__pb2.Response.SerializeToString,
+            ),
+            'GetQueue': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetQueue,
+                    request_deserializer=mom__pb2.ReplicationRequest.FromString,
+                    response_serializer=mom__pb2.GetQueueResponse.SerializeToString,
+            ),
+            'ImportQueue': grpc.unary_unary_rpc_method_handler(
+                    servicer.ImportQueue,
+                    request_deserializer=mom__pb2.ImportQueueRequest.FromString,
+                    response_serializer=mom__pb2.ImportReplicationResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -604,126 +722,6 @@ class QueueService(object):
             metadata,
             _registered_method=True)
 
-
-class ReplicationServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.GetTopic = channel.unary_unary(
-                '/mom.ReplicationService/GetTopic',
-                request_serializer=mom__pb2.ReplicationRequest.SerializeToString,
-                response_deserializer=mom__pb2.GetTopicResponse.FromString,
-                _registered_method=True)
-        self.GetQueue = channel.unary_unary(
-                '/mom.ReplicationService/GetQueue',
-                request_serializer=mom__pb2.ReplicationRequest.SerializeToString,
-                response_deserializer=mom__pb2.GetQueueResponse.FromString,
-                _registered_method=True)
-        self.ImportQueue = channel.unary_unary(
-                '/mom.ReplicationService/ImportQueue',
-                request_serializer=mom__pb2.ImportQueueRequest.SerializeToString,
-                response_deserializer=mom__pb2.ImportReplicationResponse.FromString,
-                _registered_method=True)
-        self.ImportTopic = channel.unary_unary(
-                '/mom.ReplicationService/ImportTopic',
-                request_serializer=mom__pb2.ImportTopicRequest.SerializeToString,
-                response_deserializer=mom__pb2.ImportReplicationResponse.FromString,
-                _registered_method=True)
-
-
-class ReplicationServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def GetTopic(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetQueue(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ImportQueue(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ImportTopic(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_ReplicationServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'GetTopic': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetTopic,
-                    request_deserializer=mom__pb2.ReplicationRequest.FromString,
-                    response_serializer=mom__pb2.GetTopicResponse.SerializeToString,
-            ),
-            'GetQueue': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetQueue,
-                    request_deserializer=mom__pb2.ReplicationRequest.FromString,
-                    response_serializer=mom__pb2.GetQueueResponse.SerializeToString,
-            ),
-            'ImportQueue': grpc.unary_unary_rpc_method_handler(
-                    servicer.ImportQueue,
-                    request_deserializer=mom__pb2.ImportQueueRequest.FromString,
-                    response_serializer=mom__pb2.ImportReplicationResponse.SerializeToString,
-            ),
-            'ImportTopic': grpc.unary_unary_rpc_method_handler(
-                    servicer.ImportTopic,
-                    request_deserializer=mom__pb2.ImportTopicRequest.FromString,
-                    response_serializer=mom__pb2.ImportReplicationResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'mom.ReplicationService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('mom.ReplicationService', rpc_method_handlers)
-
-
- # This class is part of an EXPERIMENTAL API.
-class ReplicationService(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def GetTopic(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/mom.ReplicationService/GetTopic',
-            mom__pb2.ReplicationRequest.SerializeToString,
-            mom__pb2.GetTopicResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
     @staticmethod
     def GetQueue(request,
             target,
@@ -738,7 +736,7 @@ class ReplicationService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/mom.ReplicationService/GetQueue',
+            '/mom.QueueService/GetQueue',
             mom__pb2.ReplicationRequest.SerializeToString,
             mom__pb2.GetQueueResponse.FromString,
             options,
@@ -765,35 +763,8 @@ class ReplicationService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/mom.ReplicationService/ImportQueue',
+            '/mom.QueueService/ImportQueue',
             mom__pb2.ImportQueueRequest.SerializeToString,
-            mom__pb2.ImportReplicationResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def ImportTopic(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/mom.ReplicationService/ImportTopic',
-            mom__pb2.ImportTopicRequest.SerializeToString,
             mom__pb2.ImportReplicationResponse.FromString,
             options,
             channel_credentials,

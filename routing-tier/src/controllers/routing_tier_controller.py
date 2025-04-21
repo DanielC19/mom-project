@@ -178,93 +178,127 @@ class RoutingTier:
             print(f"Failed to create topic via gRPC: {str(e)}")
             return {"success": False, "message": str(e)}
 
-    def perform_failover(self, is_topic, id, target):
-        """Realiza la llamada RPC FailOver para notificar a la MOM del nuevo líder."""
-        with grpc.insecure_channel(f"{target}:50051") as channel:
-            stub = ReplicationServiceStub(channel)
-            request = FailOverRequest(isTopic=is_topic, target=target, id=id)
-            response = stub.FailOver(request)
-        return response
+    def handle_failover_queue(self, queue_name, retry=False):
+        if queue_name not in self.queues:
+            print(f"Queue {queue_name} does not exist.")
+            return
 
-    def handle_failover(self, queue_name=None, topic_name=None):
-        # Handle failover for queues
-        if queue_name is not None:
-            if queue_name not in self.queues:
-                print(f"Queue {queue_name} does not exist.")
-            else:
-                q_info = self.queues[queue_name]
-                leader = q_info["leader"]
-                follower = q_info["follower"]
-                if leader not in self.hosts:
-                    print(f"Leader {leader} for queue {queue_name} is down. Promoting follower.")
-                    self.queues[queue_name]["leader"] = follower
-                    new_follower_candidates = [host for host in self.hosts if host != follower]
-                    if new_follower_candidates:
-                        new_follower = random.choice(new_follower_candidates)
-                        self.queues[queue_name]["follower"] = new_follower
-                        self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{follower}|{new_follower}".encode())
-                        # Notificar a la MOM del nuevo líder para la cola
-                        response = self.perform_failover(is_topic=False, id=queue_name, target=follower)
-                        print(f"New leader for queue {queue_name} is {follower}. Failover response: {response.message}")
-                    else:
-                        self.queues[queue_name]["follower"] = None
-                elif follower not in self.hosts:
-                    print(f"Follower {follower} for queue {queue_name} is down. Assigning a new follower.")
-                    new_follower_candidates = [host for host in self.hosts if host != leader]
-                    if new_follower_candidates:
-                        new_follower = random.choice(new_follower_candidates)
-                        self.queues[queue_name]["follower"] = new_follower
-                        self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{leader}|{new_follower}".encode())
-                        print(f"New follower for queue {queue_name} is {new_follower}.")
-                    else:
-                        self.queues[queue_name]["follower"] = None
+        q_info = self.queues[queue_name]
+        leader = q_info["leader"]
+        follower = q_info["follower"]
 
-        # Handle failover for topics
-        if topic_name is not None:
-            if topic_name not in self.topics:
-                print(f"Topic {topic_name} does not exist.")
+        if leader == "None" and follower == "None":
+            print(f"Queue {queue_name} has no leader or follower. Deleting queue.")
+            self.zk.delete(f"{QUEUE_PATH}/{queue_name}")
+            del self.queues[queue_name]
+            return
+
+        if leader not in self.hosts:
+            print(f"Leader {leader} for queue {queue_name} is down. Promoting follower.")
+            self.queues[queue_name]["leader"] = follower
+            new_follower_candidates = [host for host in self.hosts if host != follower]
+            if new_follower_candidates:
+                new_follower = random.choice(new_follower_candidates)
+                new_follower_ip, new_follower_port = new_follower.split("_")
+                new_follower_client = GRPCClient(host=new_follower_ip, port=int(new_follower_port))
+
+                _, follower_client = self.queue_grpc_client(queue_name)
+                exported_topic = follower_client.export_queue(queue_name)
+                new_follower_client.import_queue(exported_topic.data)
+
+                self.queues[queue_name]["follower"] = new_follower
+                self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{follower}|{new_follower}".encode())
+                print(f"New leader for queue {queue_name} is {follower}.")
             else:
-                t_info = self.topics[topic_name]
-                leader = t_info["leader"]
-                follower = t_info["follower"]
-                if leader not in self.hosts:
-                    print(f"Leader {leader} for topic {topic_name} is down. Promoting follower.")
-                    self.topics[topic_name]["leader"] = follower
-                    new_follower_candidates = [host for host in self.hosts if host != follower]
-                    if new_follower_candidates:
-                        new_follower = random.choice(new_follower_candidates)
-                        self.topics[topic_name]["follower"] = new_follower
-                        self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{follower}|{new_follower}".encode())
-                        # Notificar a la MOM del nuevo líder para el tópico
-                        response = self.perform_failover(is_topic=True, id=topic_name, target=follower)
-                        print(f"New leader for topic {topic_name} is {follower}. Failover response: {response.message}")
-                    else:
-                        self.topics[topic_name]["follower"] = None
-                elif follower not in self.hosts:
-                    print(f"Follower {follower} for topic {topic_name} is down. Assigning a new follower.")
-                    new_follower_candidates = [host for host in self.hosts if host != leader]
-                    if new_follower_candidates:
-                        new_follower = random.choice(new_follower_candidates)
-                        self.topics[topic_name]["follower"] = new_follower
-                        self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{leader}|{new_follower}".encode())
-                        print(f"New follower for topic {topic_name} is {new_follower}.")
-                    else:
-                        self.topics[topic_name]["follower"] = None
+                self.queues[queue_name]["follower"] = None
+                self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{follower}|None".encode())
+
+        elif follower not in self.hosts:
+            print(f"Follower {follower} for queue {queue_name} is down. Assigning a new follower.")
+            new_follower_candidates = [host for host in self.hosts if host != leader]
+            if new_follower_candidates:
+                new_follower = random.choice(new_follower_candidates)
+                new_follower_ip, new_follower_port = new_follower.split("_")
+                new_follower_client = GRPCClient(host=new_follower_ip, port=int(new_follower_port))
+
+                leader_client, _ = self.queue_grpc_client(queue_name)
+                exported_topic = leader_client.export_queue(queue_name)
+                new_follower_client.import_queue(exported_topic.data)
+
+                self.queues[queue_name]["follower"] = new_follower
+                self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{leader}|{new_follower}".encode())
+                print(f"New follower for queue {queue_name} is {new_follower}.")
+            else:
+                self.queues[queue_name]["follower"] = None
+                self.zk.set(f"{QUEUE_PATH}/{queue_name}", f"{leader}|None".encode())
+
+    def handle_failover_topic(self, topic_name):
+        if topic_name not in self.topics:
+            print(f"Topic {topic_name} does not exist.")
+            return
+
+        t_info = self.topics[topic_name]
+        leader = t_info["leader"]
+        follower = t_info["follower"]
+
+        if (leader == "None" or not leader) and (follower == "None" or not follower):
+            print(f"Topic {topic_name} has no leader or follower. Deleting topic.")
+            self.zk.delete(f"{TOPIC_PATH}/{topic_name}")
+            del self.topics[topic_name]
+            return
+
+        if leader not in self.hosts:
+            print(f"Leader {leader} for topic {topic_name} is down. Promoting follower.")
+            self.topics[topic_name]["leader"] = follower
+            new_follower_candidates = [host for host in self.hosts if host != follower]
+            if new_follower_candidates:
+                new_follower = random.choice(new_follower_candidates)
+                new_follower_ip, new_follower_port = new_follower.split("_")
+                new_follower_client = GRPCClient(host=new_follower_ip, port=int(new_follower_port))
+
+                leader_client, _ = self.topic_grpc_client(topic_name)
+                exported_topic = leader_client.export_topic(topic_name)
+                new_follower_client.import_topic(exported_topic.data)
+
+                self.topics[topic_name]["follower"] = new_follower
+                self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{leader}|{new_follower}".encode())
+                print(f"New leader for topic {topic_name} is {leader}.")
+            else:
+                self.topics[topic_name]["follower"] = None
+                self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{leader}|None".encode())
+
+        elif follower not in self.hosts:
+            print(f"Follower {follower} for topic {topic_name} is down. Assigning a new follower.")
+            new_follower_candidates = [host for host in self.hosts if host != leader]
+            if new_follower_candidates:
+                new_follower = random.choice(new_follower_candidates)
+                new_follower_ip, new_follower_port = new_follower.split("_")
+                new_follower_client = GRPCClient(host=new_follower_ip, port=int(new_follower_port))
+
+                leader_client, _ = self.topic_grpc_client(topic_name)
+                exported_topic = leader_client.export_topic(topic_name)
+                new_follower_client.import_topic(exported_topic.data)
+
+                self.topics[topic_name]["follower"] = new_follower
+                self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{leader}|{new_follower}".encode())
+                print(f"New follower for topic {topic_name} is {new_follower}.")
+            else:
+                self.topics[topic_name]["follower"] = None
+                self.zk.set(f"{TOPIC_PATH}/{topic_name}", f"{follower}|None".encode())
 
     def monitor_queues(self):
         """Monitor queues and handle failovers."""
         while True:
             for queue_name in list(self.queues.keys()):
-                self.handle_failover(queue_name=queue_name)
-            time.sleep(5)
-    
+                self.handle_failover_queue(queue_name)
+            time.sleep(3)
+
     def monitor_topics(self):
         """Monitor queues and handle failovers."""
         while True:
             for topic in list(self.topics.keys()):
-                self.handle_failover(topic_name=topic)
-            time.sleep(5)
-    
+                self.handle_failover_topic(topic)
+            time.sleep(3)
 
     def push_message_queue(self, queue_id, data, user):
         """Push a message to the queue using gRPC."""

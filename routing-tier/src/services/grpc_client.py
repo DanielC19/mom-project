@@ -58,3 +58,19 @@ class GRPCClient:
     def delete_queue(self, queue_id, user):
         request = mom_pb2.DeleteQueueRequest(queue_id=queue_id, user=user)
         return self.queue_stub.DeleteQueue(request)
+
+    def export_queue(self, queue_id):
+        request = mom_pb2.ReplicationRequest(target=queue_id)
+        return self.queue_stub.GetQueue(request)
+
+    def import_queue(self, queue):
+        request = mom_pb2.ImportQueueRequest(queue=queue)
+        return self.queue_stub.ImportQueue(request)
+
+    def export_topic(self, topic_id):
+        request = mom_pb2.ReplicationRequest(target=topic_id)
+        return self.topic_stub.GetTopic(request)
+
+    def import_topic(self, topic):
+        request = mom_pb2.ImportTopicRequest(topic=topic)
+        return self.topic_stub.ImportTopic(request)

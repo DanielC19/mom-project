@@ -1,6 +1,6 @@
 from src.models.message import Message
 from src.models.queue import Queue
-from src.utils.replication_pb2 import Message as ProtoMessage
+from src.utils.mom_pb2 import MessageReplication
 
 class QueueService:
     def __init__(self):
@@ -38,14 +38,35 @@ class QueueService:
         print(f"Queue {queue_id} not found")
         return False
 
-    def get_queue_messages(self, queue_id):
-        queue = self.queues.get(queue_id)
-        if queue:
-            return [ProtoMessage(
-                        message_id=msg.message_id,
-                        parent=msg.parent,
-                        content=msg.content,
-                        sender=msg.sender,
-                        timestamp=msg.timestamp
-                    ) for msg in queue.messages]
-        return []
+    def export_queue(self, queue_id):
+        queue = self.queues[queue_id]
+        if queue is not None:
+            messages = [
+                MessageReplication(
+                    message_id=msg.to_dict().get("message_id", ""),
+                    parent=msg.to_dict().get("parent", ""),
+                    content=msg.to_dict().get("content", ""),
+                    sender=msg.to_dict().get("sender", ""),
+                    timestamp=msg.to_dict().get("timestamp", ""),
+                    sent=msg.to_dict().get("sent", []),
+                ) for msg in queue.messages
+            ]
+            data = queue.to_dict()
+            data["messages"] = messages
+            return data
+        else:
+            raise Exception(f"Queue {queue_id} not found")
+
+    def import_queue(self, queue):
+        queue_id = queue.queue_id
+        if queue_id in self.queues:
+            raise Exception(f"Queue {queue_id} already exists")
+        else:
+            self.queues[queue_id] = Queue(queue_id, queue.autor)
+            for message in queue.messages:
+                self.queues[queue_id].enqueue(Message(
+                    message.content,
+                    message.parent,
+                    message.sender,
+                    message_id=message.message_id,
+                ))

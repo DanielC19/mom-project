@@ -11,6 +11,8 @@ service TopicService {
     rpc ListTopics (Empty) returns (ListTopicsResponse);
     rpc PullMessages (PullMessagesRequest) returns (MessagesResponse);
     rpc DeleteTopic (DeleteTopicRequest) returns (Response);
+    rpc GetTopic (ReplicationRequest) returns (GetTopicResponse);
+    rpc ImportTopic (ImportTopicRequest) returns (ImportReplicationResponse);
 }
 
 // Service for Queues
@@ -20,14 +22,8 @@ service QueueService {
     rpc PushMessage (PushMessageRequest) returns (Response);
     rpc PullMessage (PullMessageRequest) returns (MessageResponse);
     rpc DeleteQueue (DeleteQueueRequest) returns (Response);
-}
-
-service ReplicationService{
-    rpc GetTopic (ReplicationRequest) returns (GetTopicResponse);
     rpc GetQueue (ReplicationRequest) returns (GetQueueResponse);
     rpc ImportQueue (ImportQueueRequest) returns (ImportReplicationResponse);
-    rpc ImportTopic (ImportTopicRequest) returns (ImportReplicationResponse);
-
 }
 
 // Common messages
@@ -152,6 +148,7 @@ message TopicReplication {
     string topic_id = 1;
     string autor = 2;
     repeated MessageReplication messages = 3;
+    repeated string subscribers = 4;
 }
 
 message QueueReplication {

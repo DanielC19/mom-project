@@ -53,7 +53,26 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
         ])
 
     def DeleteTopic(self, request, context):
-        #TODO: review that only the creator be capablke to delete
         success = self.service.delete_topic(request.topic_id, request.user)
         message = "Topic deleted" if success else "Topic not found or unauthorization failed"
         return mom_pb2.Response(success=success, message=message)
+
+    def GetTopic(self, request, context):
+        try:
+            topic_data = self.service.export_topic(request.target)
+            return mom_pb2.GetTopicResponse(
+                success=True,
+                message="Topic exported",
+                data=topic_data
+            )
+        except Exception as e:
+            print(f"Failed to export topic: {e}")
+            return mom_pb2.GetTopicResponse(success=False, message=str(e))
+
+    def ImportTopic(self, request, context):
+        try:
+            self.service.import_topic(request.topic)
+            return mom_pb2.Response(success=True, message="Topic imported")
+        except Exception as e:
+            print(f"Failed to import topic: {e}")
+            return mom_pb2.Response(success=False, message=str(e))

@@ -44,11 +44,29 @@ class QueueServiceServicer(mom_pb2_grpc.QueueServiceServicer):
                     timestamp=message.timestamp
                 )
             )
-        context.set_code(grpc.StatusCode.NOT_FOUND)
-        context.set_details("Queue not found")
-        return mom_pb2.MessageResponse(success=False, message="Queue not found")
+        return mom_pb2.MessageResponse(success=False, message="There are no messages in the queue")
 
     def DeleteQueue(self, request, context):
         success = self.service.delete_queue(request.queue_id, request.user)
         message = "Queue deleted" if success else "Queue not found or uathorization failed"
         return mom_pb2.Response(success=success, message=message)
+
+    def GetQueue(self, request, context):
+        try:
+            queue_data = self.service.export_queue(request.target)
+            return mom_pb2.GetQueueResponse(
+                success=True,
+                message="Queue exported",
+                data=queue_data
+            )
+        except Exception as e:
+            print(f"Failed to export queue: {e}")
+            return mom_pb2.GetQueueResponse(success=False, message=str(e))
+
+    def ImportQueue(self, request, context):
+        try:
+            self.service.import_queue(request.queue)
+            return mom_pb2.Response(success=True, message="Queue imported")
+        except Exception as e:
+            print(f"Failed to import queue: {e}")
+            return mom_pb2.Response(success=False, message=str(e))
