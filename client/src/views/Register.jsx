@@ -22,7 +22,7 @@ function Register({ setUser }) {
     userAPI.create(registerState.name, registerState.password)
       .then(response => {
         if (response.success) {
-          navigate(`/chat?user=${response.token}`);
+          navigate(`/chat?user=${response.data.token}&name=${response.data.username}`);
         } else {
           setErrorState(response.message);
         }

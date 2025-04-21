@@ -54,11 +54,25 @@ const sendMessage = async (token, queueId, message) => {
     return data;
 }
 
+const Delete = async (token, queueId) => {
+    const {data} = await config.API.delete(`/queue/${queueId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
+        return { data: {
+            success: false,
+            message: err.message
+            }
+        }
+    });
+    return data;
+}
+
 const methots = {
     create,
     getMessages,
     sendMessage,
-    getQueues
+    getQueues,
+    Delete
 };
 
 export default methots;

@@ -64,12 +64,27 @@ const suscribe = async (token, topicId) => {
     return data;
 }
 
+
+const Delete = async (token, topicId) => {
+    const {data} = await config.API.delete(`/topic/${topicId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+    ).catch(err => {
+        return { data: {
+            success: false,
+            message: err.message
+            }
+        }
+    });
+    return data;
+}
+
 const methots = {
     create,
     getMessages,
     sendMessage,
     getTopics,
-    suscribe
+    suscribe,
+    Delete
 };
 
 export default methots;
