@@ -9,14 +9,17 @@ message_schema = {
     },
     "required": ["content"],
 }
- 
+
 class Message:
-    def __init__(self, content, parent, sender=None):
+    def __init__(self, content, parent, sender=None, sent=[], message_id=None):
+        if message_id is None:
+            message_id = self.generate_message_id(parent)
+        self.message_id = message_id
         self.message_id = self.generate_message_id(parent)
         self.parent = parent
         self.content = content
         self.sender = sender
-        self.sent = []
+        self.sent = sent
         self.timestamp = datetime.now().isoformat()
 
     def to_dict(self):
