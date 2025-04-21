@@ -24,6 +24,7 @@ class Topic:
 
     def publish_message(self, message: Message):
         self.messages.append(message)
+        for message in self.messages:
         return True
 
     def subscribe(self, subscriber_id):

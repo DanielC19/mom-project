@@ -41,11 +41,9 @@ class TopicsService:
         if topic_id in self.topics:
             topic = self.topics[topic_id]
             if topic.autor != user:  # Validar que el usuario sea el creador
-                print(f"User {user} is not authorized to delete topic {topic_id}")
                 return False
             del self.topics[topic_id]
             return True
-        print(f"Topic {topic_id} not found")
         return False
 
     def export_topic(self, topic_id):

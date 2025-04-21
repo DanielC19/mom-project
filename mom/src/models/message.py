@@ -11,7 +11,7 @@ message_schema = {
 }
 
 class Message:
-    def __init__(self, content, parent, sender=None, sent=[], message_id=None):
+    def __init__(self, content, parent, sender=None,  message_id=None):
         if message_id is None:
             message_id = self.generate_message_id(parent)
         self.message_id = message_id
@@ -19,7 +19,7 @@ class Message:
         self.parent = parent
         self.content = content
         self.sender = sender
-        self.sent = sent
+        self.sent = []
         self.timestamp = datetime.now().isoformat()
 
     def to_dict(self):
