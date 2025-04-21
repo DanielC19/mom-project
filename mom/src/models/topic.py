@@ -13,7 +13,7 @@ class Topic:
         self.topic_id = topic_id
         self.autor = autor
         self.messages = []
-        self.subscribers = {}  # Cambiado a diccionario para manejar colas por suscriptor
+        self.subscribers = []
 
     def to_dict(self):
         return {
@@ -24,26 +24,24 @@ class Topic:
 
     def publish_message(self, message: Message):
         self.messages.append(message)
-        for subscriber_id in self.subscribers:
-            self.subscribers[subscriber_id].append(message)  # Enviar mensaje a cada suscriptor
         return True
 
     def subscribe(self, subscriber_id):
         if subscriber_id not in self.subscribers:
-            self.subscribers[subscriber_id] = []  # Inicializa la cola del suscriptor
+            self.subscribers.append(subscriber_id)
             return True
         return False
 
     def unsubscribe(self, subscriber_id):
         if subscriber_id in self.subscribers:
-            del self.subscribers[subscriber_id]  # Elimina la cola del suscriptor
+            self.subscribers.remove(subscriber_id)
             return True
         return False
 
     def pull_messages(self, subscriber_id):
         messages_to_send = []
         for message in self.messages:
-            if(subscriber_id not in message.sent):
+            if subscriber_id not in message.sent:
                 messages_to_send.append(message)
                 message.sent.append(subscriber_id)
         return messages_to_send
