@@ -34,8 +34,6 @@ class TopicServiceServicer(mom_pb2_grpc.TopicServiceServicer):
 
     def ListTopics(self, request, context):
         topics = self.service.get_topics()
-        print(f"Topics: {topics}")
-
         return mom_pb2.ListTopicsResponse(topics=topics)
 
     def PullMessages(self, request, context):

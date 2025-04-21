@@ -61,7 +61,7 @@ message Topic {
 }
 
 message Queue {
-    string topic_id = 1;
+    string queue_id = 1;
     string autor = 2;
 }
 
