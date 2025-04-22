@@ -334,6 +334,7 @@ Iniciar el contenedor de zookeeper con la configuracion necesaria con el siguien
 
 ## 5. Conexión SSH a las instancias creadas
 El archivo "santiago.pem" viene adjunto en el entregable del proyecto
+
 Mom 1
 ```{bash}
 ssh -i "santiago.pem" ubuntu@ec2-44-202-123-39.compute-1.amazonaws.com
