@@ -202,7 +202,7 @@ npm start
         ├── Login.jsx
         └── Register.jsx
 
-## 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
+## 4. Ambiente de producción y despliegue
 
 ## IP o nombres de dominio en nube o en la máquina servidor:
 
@@ -332,6 +332,32 @@ Iniciar el contenedor de zookeeper con la configuracion necesaria con el siguien
     docker-compose -f docker-compose-zookeeper.yml up -d
 ```
 
+## 5. Conexión SSH a las instancias creadas
+El archivo "santiago.pem" viene adjunto en el entregable del proyecto
+Mom 1
+```{bash}
+ssh -i "santiago.pem" ubuntu@ec2-44-202-123-39.compute-1.amazonaws.com
+```
+Mom 2
+```{bash}
+ssh -i "santiago.pem" ubuntu@ec2-3-80-35-67.compute-1.amazonaws.com
+```
+Mom 3
+```{bash}
+ssh -i "santiago.pem" ubuntu@ec2-3-80-204-18.compute-1.amazonaws.com
+```
+Cliente
+```{bash}
+ssh -i "santiago.pem" ubuntu@ec2-13-219-188-33.compute-1.amazonaws.com
+```
+Zookeeper
+```{bash}
+ssh -i "santiago.pem" ubuntu@ec2-3-82-225-247.compute-1.amazonaws.com
+```
+Routing Tier
+```{bash}
+ssh -i "santiago.pem" ubuntu@ec2-107-22-123-0.compute-1.amazonaws.com
+```
 
 # Referencias:
 [GitHub Copilot](https://github.com/features/copilot)
