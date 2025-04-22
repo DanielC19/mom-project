@@ -41,6 +41,22 @@ Para hacer la comunicación un poco más amigable con el usuario final, implemen
 
 ## 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
 
+### **Arquitectura**
+El proyecto implementa una arquitectura distribuida basada en un **Middleware Orientado a Mensajes (MOM)**. Esto incluye lo siguiente:
+
+- **Routing Tier**: Es la que actúa como intermediario entre los clientes y las instancias MOM, balanceando la carga y asegurando disponibilidad.
+- **Instancias MOM**: Tres instancias que manejan colas y tópicos para el intercambio de mensajes.
+- **Cliente**: Una interfaz que permite a los usuarios interactuar con el sistema para enviar y recibir mensajes.
+
+### **Mejores prácticas**
+- **Escalabilidad**: La arquitectura distribuida permite agregar más instancias MOM según la demanda.
+- **Separación de responsabilidades**: Cada componente (Routing Tier, MOM, Cliente) tiene una función específica.
+- **Uso de APIs REST**: Los servicios están expuestos como APIs REST, facilitando la integración con otros sistemas.
+- **Tolerancia a fallos**: Se implementa redundancia en las instancias MOM, aunque dependan de la disponibilidad de Zookeeper.
+- **Modelo síncrono y asíncrono**: El sistema utiliza colas y tópicos para manejar mensajes de manera asíncrona en la comunicación con la MOM. Además, usa gRPC para que las peticiones del cliente lleguen a la MOM y se permita esta comunicación exitosamente.
+
+
+
 ## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
 como se compila y ejecuta.
