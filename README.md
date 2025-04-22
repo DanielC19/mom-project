@@ -60,9 +60,9 @@ El proyecto implementa una arquitectura distribuida basada en un **Middleware Or
 ### **2. Patrones de Rendimiento**
 - **Patrón de Productor-Consumidor**:
     - Las colas y tópicos desacoplan la producción y el consumo de mensajes, permitiendo que los productores (clientes) y consumidores (suscriptores) trabajen a diferentes velocidades sin afectar el rendimiento general.
-
 - **Patrón de Escalabilidad Horizontal**:
     - La arquitectura distribuida permite agregar más instancias MOM según la demanda, mejorando el rendimiento del sistema bajo alta carga.
+![WhatsApp Image 2025-04-20 at 12 23 40 PM](https://github.com/user-attachments/assets/fb5eae4f-5b59-44f0-a7a4-3d344f3e3bfc)
 
 ### **Mejores prácticas**
 - **Escalabilidad**: La arquitectura distribuida permite agregar más instancias MOM según la demanda.
