@@ -50,6 +50,20 @@ El proyecto implementa una arquitectura distribuida basada en un **Middleware Or
 
 ![MOM(1)](https://github.com/user-attachments/assets/8bcabbeb-3898-43c3-82bc-242859e0860c)
 
+
+### **2. Patrones de Disponibilidad**
+- **Patrón de Balanceo de Carga**:
+  - El **Routing Tier** distribuye las solicitudes entre las instancias MOM utilizando un mecanismo de selección (como round-robin o selección aleatoria). Esto evita la sobrecarga en una sola instancia y mejora la disponibilidad.
+- **Patrón de Redundancia**:
+  - Se implementan múltiples instancias de MOM para garantizar que el sistema siga funcionando incluso si una instancia falla.
+  - El uso de Zookeeper permite registrar y descubrir dinámicamente las instancias MOM disponibles, asegurando que siempre haya nodos accesibles.
+### **2. Patrones de Rendimiento**
+- **Patrón de Productor-Consumidor**:
+    - Las colas y tópicos desacoplan la producción y el consumo de mensajes, permitiendo que los productores (clientes) y consumidores (suscriptores) trabajen a diferentes velocidades sin afectar el rendimiento general.
+
+- **Patrón de Escalabilidad Horizontal**:
+    - La arquitectura distribuida permite agregar más instancias MOM según la demanda, mejorando el rendimiento del sistema bajo alta carga.
+
 ### **Mejores prácticas**
 - **Escalabilidad**: La arquitectura distribuida permite agregar más instancias MOM según la demanda.
 - **Separación de responsabilidades**: Cada componente (Routing Tier, MOM, Cliente) tiene una función específica.
