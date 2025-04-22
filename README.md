@@ -12,9 +12,32 @@
 
 ## 1. Breve descripción de la actividad
 
-### 1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
+Nuestro proyecto consiste en un Middleware Orientado a Mensajes (MOM), el cual lo diseñamos para facilitar la comunicación entre aplicaciones usando intercambio de mensajes a través de colas o tópicos.
 
-### 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
+Para esto decidimos implementar un Routing Tier como intermediario permitiéndonos así enrutar las solicitudes de los clientes hacia las instancias MOM, balanceando la carga y asegurando disponibilidad.
+
+Para hacer la comunicación un poco más amigable con el usuario final, implementamos una interfaz en el cliente para enviar las solicitudes de mensaje y recibir la respuesta.
+
+
+### 1.1. Aspectos cumplidos
+
+- **Envío y recepción de mensajes identificando usuarios**
+- **Exposición de servicios como API REST**
+- **Implementación del cliente y su interfaz**
+- **Implementación de la Routing Tier**
+- **Replicación y particionamiento**
+- **Definición de arquitectura distribuida**: Imlementamos una arquitectura distribuida con múltiples instancias de MOM y un Routing Tier
+- **Tolerancia a fallos en servidores**: Usamos la redundancia a través de la creación de varias instancias de la MOM. Sin embargo, somos dependientes de que el Zookeeper no se caiga.
+- **Modelo de interacción asíncrona**: Dado que las MOM funcionan perfectamente
+- **Multiusuario**: Cualquier usuario se puede autenticar para interactuar con la aplicación.
+- **Consideraciones de escalabilidad**
+- **Transparencia**: El usuario nunca tiene acceso unicamente al auth, el envío y la recepción de mensajes.
+- **Extensibilidad**
+### 1.2. Aspectos no cumplidos
+- **Transporte de mensajes encriptado**: Actualmente usamos un token en el usuario para el envío y recepción de los mensajes pero la estructura base del mensaje no está encriptada.
+- **Desconexión con usuarios autenticados**
+- **Desconexión de usuarios**
+- **Tolerancia a Fallos por el Zookeeper**
 
 ## 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
 
