@@ -11,7 +11,7 @@ message_schema = {
 }
 
 class Message:
-    def __init__(self, content, parent, sender=None,sent=None,  message_id=None):
+    def __init__(self, content, parent, sender=None, sent=None,  message_id=None):
         if message_id is None:
             message_id = self.generate_message_id(parent)
         self.message_id = message_id
