@@ -1,4 +1,4 @@
-# info de la materia: ST0263-7290
+# ST0263-7290
 
 # Estudiante(s):
 - Daniel Correa Botero, dcorreab2@eafit.edu.co
@@ -47,7 +47,7 @@ El proyecto implementa una arquitectura distribuida basada en un **Middleware Or
 - **Routing Tier**: Es la que actúa como intermediario entre los clientes y las instancias MOM, balanceando la carga y asegurando disponibilidad.
 - **Instancias MOM**: Tres instancias que manejan colas y tópicos para el intercambio de mensajes.
 - **Cliente**: Una interfaz que permite a los usuarios interactuar con el sistema para enviar y recibir mensajes.
-  
+
 ![MOM(1)](https://github.com/user-attachments/assets/8bcabbeb-3898-43c3-82bc-242859e0860c)
 
 ### **Mejores prácticas**
@@ -57,17 +57,150 @@ El proyecto implementa una arquitectura distribuida basada en un **Middleware Or
 - **Tolerancia a fallos**: Se implementa redundancia en las instancias MOM, aunque dependan de la disponibilidad de Zookeeper.
 - **Modelo síncrono y asíncrono**: El sistema utiliza colas y tópicos para manejar mensajes de manera asíncrona en la comunicación con la MOM. Además, usa gRPC para que las peticiones del cliente lleguen a la MOM y se permita esta comunicación exitosamente.
 
+## 3. Ambiente local para desarrollo
 
+El proyecto fue realizado en Python, usando Flask para la exposición de los endpoints para uso del cliente, es decir, el Routing Tier implementado usa Flask para recibir las peticiones y usando su tabla de enrutamiento, redirigir a través de gRPC la solicitud al MOM correspondiente, para esta comunicación gRPC se usó Protobuf, con sus respectivos archivos *.proto para definir y estandarizar los métodos implementados. El Routing Tier tiene una base de datos interna de SQLite para gestionar la autenticación y mantener guardados los usuarios registrados, ésta ya está configurada, no hay que hacer nada adicional. El cliente está implementado en React, el cual se conecta por API Rest al servidor de MOMs.
 
-## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
+#### Requerimientos pre-instalados:
+- Python 3.13
+- Node 23
+- Npm 11
+- Zookeeper 3.8
 
-como se compila y ejecuta.
-detalles del desarrollo.
-detalles técnicos
-descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
-opcional - detalles de la organización del código por carpetas o descripción de algún archivo. (ESTRUCTURA DE DIRECTORIOS Y ARCHIVOS IMPORTANTE DEL PROYECTO, comando 'tree' de linux)
+Todos los paquetes y librerías de Python utilizadas se pueden encontrar en los archivos [`mom/requirements.txt`](./mom/requirements.txt) y [`routing-tier/requirements.txt`](./routing-tier/requirements.txt). Allí están especificadas las versiones de cada una de ellas.
 
-opcionalmente - si quiere mostrar resultados o pantallazos
+Los paquetes y librerías de JavaScript utilizadas junto con sus versiones se reportan en [`client/package.json`](./client/package.json).
+
+#### Ejecución
+Teniendo esto en cuenta, para ejecutar el proyecto en desarrollo local se debe:
+
+1. Activar el daemon de Zookeeper, esto puede cambiar sustancialmente en diferentes Sistemas Operativos, remítase a [Referencias](#referencias)->Apache Zookeeper Docs para verificar este proceso.
+
+2. Instalar requerimientos del Routing Tier. Se recomienda usar un entorno virtual de Python.
+```{bash}
+cd routing-tier/
+python -m venv .venv
+source .venv/bin/activate ## para linux
+pip install -r requirements.txt
+```
+3. Ejecutar Routing Tier. Iniciará en el puerto 5000.
+```{bash}
+python app.py
+```
+
+4. Instalar requerimientos del MOM. Se recomienda usar un entorno virtual de Python.
+```{bash}
+cd mom/
+python -m venv .venv
+source .venv/bin/activate ## para linux
+pip install -r requirements.txt
+```
+
+5. Ejecutar MOM. Iniciará en el puerto 5001. Si usará diferentes MOMs al mismo tiempo se debe cambiar la variable `port` de [`app.py`](./mom/app.py) para cambiar el puerto usado.
+```{bash}
+python app.py
+```
+
+6. Instalar dependencias de JavaScript y React.
+```{bash}
+npm install
+```
+
+7. Ejecutar el cliente. Iniciará en el puerto 3000.
+```{bash}
+npm start
+```
+
+#### Estructura archivos Routing Tier
+├── app.db
+├── app.py
+├── proto
+│   └── mom.proto
+├── requirements.txt
+└── src
+    ├── controllers
+    │   ├── routing_tier_controller.py
+    │   └── user_controller.py
+    ├── grpc_client
+    │   ├── mom_pb2_grpc.py
+    │   ├── mom_pb2.py
+    ├── models
+    │   └── user.py
+    ├── routes
+    │   ├── queue_routes.py
+    │   ├── topics_routes.py
+    │   └── user_routes.py
+    ├── services
+    │   ├── grpc_client.py
+    │   └── routing_tier_service.py
+    └── utils
+        ├── database.py
+        ├── response_utils.py
+        └── utils.py
+
+#### Estructura archivos MOM
+├── app.py
+├── dockerfile
+├── proto
+│   └── mom.proto
+├── README.md
+├── requirements.txt
+└── src
+    ├── controllers
+    │   ├── QueueServiceServicer.py
+    │   └── TopicServiceServicer.py
+    ├── models
+    │   ├── message.py
+    │   ├── queue.py
+    │   └── topic.py
+    ├── services
+    │   ├── queue_service.py
+    │   └── topics_services.py
+    └── utils
+        ├── mom_pb2_grpc.py
+        ├── mom_pb2.py
+        └── utils.py
+
+#### Estructura Archivos Cliente
+├── package.json
+├── package-lock.json
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── README.md
+└── src
+    ├── App.js
+    ├── components
+    │   ├── Button.jsx
+    │   ├── chatContaincer.jsx
+    │   ├── Input.jsx
+    │   ├── LoginForm.jsx
+    │   ├── plusOverlay.jsx
+    │   └── SidebarList.jsx
+    ├── config
+    │   └── index.js
+    ├── constants
+    │   └── formFields.js
+    ├── index.css
+    ├── index.js
+    ├── logo.svg
+    ├── services
+    │   ├── colas.js
+    │   ├── topics.js
+    │   └── user.js
+    ├── styles
+    │   ├── App.css
+    │   ├── auth.css
+    │   ├── main.css
+    │   └── overlay.css
+    └── views
+        ├── chatView.jsx
+        ├── Login.jsx
+        └── Register.jsx
 
 ## 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
@@ -81,9 +214,10 @@ una mini guia de como un usuario utilizaría el software o la aplicación
 
 opcionalmente - si quiere mostrar resultados o pantallazos
 
-## 5. otra información que considere relevante para esta actividad.
-
 # Referencias:
-## sitio1-url
-## sitio2-url
-## url de donde tomo info para desarrollar este proyecto
+[GitHub Copilot](https://github.com/features/copilot)
+[ChatGPT](https://chatgpt.com)
+[Apache Zookeeper Docs](https://zookeeper.apache.org)
+[Kazoo Docs](https://kazoo.readthedocs.io/en/latest)
+[Protobuf Docs](https://protobuf-dev.translate.goog/programming-guides/proto3/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc)
+[Protobuf Tutorial Medium](https://medium.com/@roystatham3003/grpc-basics-creating-a-protobuf-file-proto-a80f02e0143b)
