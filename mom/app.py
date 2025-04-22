@@ -7,19 +7,14 @@ from src.utils import mom_pb2_grpc
 from kazoo.client import KazooClient
 import socket
 import random
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from src.controllers.TopicServiceServicer import TopicServiceServicer
 from src.controllers.QueueServiceServicer import QueueServiceServicer
 
-ZOOKEEPER_HOSTS = "127.0.0.1:2181" 
+if len(sys.argv) > 1:
+    ZOOKEEPER_HOSTS = sys.argv[1]
+else:
+    ZOOKEEPER_HOSTS = "127.0.0.1:2181"
 HOSTS_PATH = "/hosts_service"
-
-class RestartHandler(FileSystemEventHandler):
-    def on_modified(self, event):
-        if event.src_path.endswith(".py"):
-            print(f"Detected change in {event.src_path}. Restarting application...")
-            os.execv(sys.executable, ['python'] + sys.argv)
 
 def serve(port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -31,9 +26,10 @@ def serve(port):
     server.start()
     server.wait_for_termination()
 
+
 def register_with_zookeeper(zk, port):
     zk.ensure_path(HOSTS_PATH)
-    hostname = socket.gethostbyname(socket.gethostname())
+    hostname = os.getenv("HOST_IP")
     address = f"{hostname}:{port}"
     instance_name = f"{hostname}_{port}"
     node_path = f"{HOSTS_PATH}/{instance_name}"
@@ -60,18 +56,6 @@ if __name__ == "__main__":
     zk.start()
 
     port = 5001
-    # Register the MOM instance with Zookeeper
     register_with_zookeeper(zk, port)
 
-    # Set up watchdog observer
-    path_to_watch = os.path.dirname(os.path.abspath(__file__))
-    event_handler = RestartHandler()
-    observer = Observer()
-    observer.schedule(event_handler, path=path_to_watch, recursive=True)
-    observer.start()
-
-    try:
-        serve(port)
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+    serve(port)

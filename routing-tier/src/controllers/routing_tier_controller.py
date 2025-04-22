@@ -1,10 +1,15 @@
+import sys
 from kazoo.client import KazooClient
 from src.services.grpc_client import GRPCClient
 import random
 import time
 from google.protobuf.json_format import MessageToDict
 
-ZOOKEEPER_HOSTS = "127.0.0.1:2181"
+if len(sys.argv) > 1:
+    ZOOKEEPER_HOSTS = sys.argv[1]
+else:
+    ZOOKEEPER_HOSTS = "127.0.0.1:2181"
+
 HOSTS_PATH = "/hosts_service"
 QUEUE_PATH = "/queue_service"
 TOPIC_PATH = "/topic_service"
@@ -13,7 +18,19 @@ class RoutingTier:
     def __init__(self):
         self.grpc_client = GRPCClient()  # Initialize gRPC client ONLY FOR BROADCAST
         self.zk = KazooClient(hosts=ZOOKEEPER_HOSTS)
-        self.zk.start()
+        max_retries = 5
+        attempt = 0
+        while attempt < max_retries:
+            try:
+                self.zk.start()
+                break
+            except Exception as e:
+                attempt += 1
+                print(f"Attempt {attempt} to connect to Zookeeper failed: {e}")
+                time.sleep(3)
+        if attempt == max_retries:
+            print("Error connecting to Zookeeper after maximum retries")
+            self.zk = None
         self.queues = {}
         self.topics = {}
         self.hosts = []  # List of available hosts

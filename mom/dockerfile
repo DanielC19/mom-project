@@ -1,0 +1,25 @@
+FROM python:3.12-slim
+
+# Establecer variables de entorno para producción
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    ENVIRONMENT=production
+
+# Crear el directorio de trabajo
+WORKDIR /app
+
+# Instalar dependencias del sistema (para watchdog y más estabilidad)
+RUN apt-get update && apt-get install -y gcc libzookeeper-mt-dev build-essential && rm -rf /var/lib/apt/lists/*
+
+# Instalar Python requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el código de la aplicación
+COPY . .
+
+# Exponer los puertos necesarios
+EXPOSE 50051 5001
+
+# Usar exec form para manejar señales correctamente (SIGTERM/SIGKILL)
+CMD ["python", "app.py"]
