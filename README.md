@@ -47,6 +47,8 @@ El proyecto implementa una arquitectura distribuida basada en un **Middleware Or
 - **Routing Tier**: Es la que actúa como intermediario entre los clientes y las instancias MOM, balanceando la carga y asegurando disponibilidad.
 - **Instancias MOM**: Tres instancias que manejan colas y tópicos para el intercambio de mensajes.
 - **Cliente**: Una interfaz que permite a los usuarios interactuar con el sistema para enviar y recibir mensajes.
+  
+![MOM(1)](https://github.com/user-attachments/assets/8bcabbeb-3898-43c3-82bc-242859e0860c)
 
 ### **Mejores prácticas**
 - **Escalabilidad**: La arquitectura distribuida permite agregar más instancias MOM según la demanda.
